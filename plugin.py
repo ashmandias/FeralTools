@@ -198,7 +198,7 @@ class FeralTools(callbacks.Plugin):
         if host.lower() == "leon":
 #            irc.reply("Latest Staff update on Leon as of Jan 4, 2017: most likely a hardware fault (NIC), need to fly over to work on it.", prefixNick=False)
             irc.reply("Host appears to be in the process of booting, please be patient while services restart.", prefixNick=False)
-            return
+#            return
         check_thread = threading.Thread(target=self.feralstatus, args=(irc,args,host))
         check_thread.start()
         irc.reply("Feral status:|https://status.feral.io/| Overview status:|https://thehawken.org/fs.|, specific host status to follow shortly...", prefixNick=False)
