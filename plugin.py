@@ -55,6 +55,8 @@ URL_quota = "https://github.com/feralhosting/feralfilehosting/tree/master/Feral%
 URL_urls = "https://github.com/ashmandias/FeralInfo#application-access"
 URL_reroute = "https://network.feral.io/reroute"
 URL_vampire = "http://www.skidmore.edu/~pdwyer/e/eoc/help_vampire.htm"
+URL_kitten = "http://www.emergencykitten.com/"
+URL_kittens = "http://thecatapi.com/"
 
 try:
     from supybot.i18n import PluginInternationalization
@@ -194,11 +196,12 @@ class FeralTools(callbacks.Plugin):
             irc.reply("Please use the command \"status HOST\"")
             return
         if host.lower() == "leon":
-            irc.reply("Latest Staff update on Leon as of Jan 4, 2017: most likely a hardware fault (NIC), need to fly over to work on it.", prefixNick=False)
-        else:
-            check_thread = threading.Thread(target=self.feralstatus, args=(irc,args,host))
-            check_thread.start()
-            irc.reply("Feral status:|https://status.feral.io/| Overview status:|https://thehawken.org/fs.|, specific host status to follow shortly...", prefixNick=False)
+#            irc.reply("Latest Staff update on Leon as of Jan 4, 2017: most likely a hardware fault (NIC), need to fly over to work on it.", prefixNick=False)
+            irc.reply("Host appears to be in the process of booting, please be patient while services restart.", prefixNick=False)
+            return
+        check_thread = threading.Thread(target=self.feralstatus, args=(irc,args,host))
+        check_thread.start()
+        irc.reply("Feral status:|https://status.feral.io/| Overview status:|https://thehawken.org/fs.|, specific host status to follow shortly...", prefixNick=False)
 #        status = wrap(status,['anything'])
 #/Pair
 
@@ -299,7 +302,7 @@ class FeralTools(callbacks.Plugin):
         """
         Usage:
         """
-        reply = "http://tinyurl.com/33ae46"
+        reply = "Here, have a kitten! " + URL_kitten
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
@@ -308,7 +311,7 @@ class FeralTools(callbacks.Plugin):
         """
         Usage:
         """
-        reply = "KITTENS FOR EVERYONE! http://goo.gl/8pGf"
+        reply = "KITTENS FOR EVERYONE! " + URL_kittens
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
