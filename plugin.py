@@ -48,6 +48,7 @@ URL_faq_ssh = "https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/
 
 # Other URLS
 URL_OpenVPN = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md"
+URL_passwords = "https://github.com/ashmandias/FeralInfo#password-questions"
 URL_payments = "https://github.com/ashmandias/FeralInfo#payments"
 URL_pricing = "http://web.archive.org/web/20160220120121/https://www.feralhosting.com/pricing"
 URL_quota = "https://github.com/feralhosting/feralfilehosting/tree/master/Feral%20Wiki/SSH/Check%20your%20disk%20quota%20in%20SSH"
@@ -91,6 +92,24 @@ class FeralTools(callbacks.Plugin):
                 , "Joke    commands: cthulhu, kitten, kittens, vampire" ]
         if len(args) >=1 and ircutils.isNick(args[0]) and args[0] in nicks:
             irc.reply(args[0] + " : I am sending you help information in a private message. Please review it. You can test the command via PM if you like.", prefixNick=False)
+            for message in reply:
+                irc.queueMsg(ircmsgs.notice(args[0],message))
+        else: 
+            irc.reply("You need to specify a nick in " + feral_channel + " to send to", prefixNick=False)
+
+    def helpus(self, irc, msg, args):
+        """
+        Usage: urls [user] Pm (optionally to a different user) with help info
+        """
+        nicks = irc.state.channels[feral_channel].users
+        #channel_state = irc.state.channels[feral_channel]
+        #nicks = list(channel_state.users)
+        reply = ["Help us help you. Please include a description of any problem you are having, along with any relevant information -- such as what you are doing,"
+                , "trying to do, or what guide you are following."
+                , "Additionally, most issues are isolated to one server (or even one account), so please tell us what service and server you are on" ]
+                
+        if len(args) >=1 and ircutils.isNick(args[0]) and args[0] in nicks:
+            irc.reply(args[0] + " : I am sending you information on how to get the most valuable help, and how to help us help you.", prefixNick=False)
             for message in reply:
                 irc.queueMsg(ircmsgs.notice(args[0],message))
         else: 
@@ -168,6 +187,15 @@ class FeralTools(callbacks.Plugin):
 #        status = wrap(status,['anything'])
 #/Pair
 
+
+    def passwords(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "Please see the following link for password recovery tips: " + URL_passwords
+        if len(args) >=1:
+            reply = str(args[0]) + ": " + reply
+        irc.reply(reply, prefixNick=False)
 
     def payments(self, irc, msg, args):
         """
