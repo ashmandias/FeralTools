@@ -157,6 +157,21 @@ class FeralTools(callbacks.Plugin):
             reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
 
+    def ip(self,irc,msg,args):
+        """
+        Usage: ip HOST
+        """
+        if len(args) >=1:
+            host=args[0]
+        else:
+            irc.reply("Please use the command \"ip HOST\"")
+            return
+        host = str.replace(host,".feralhosting.com","")
+        if not host.isalpha():
+            irc.reply("Please use only the short hostname of a feral host")
+            return
+        irc.reply(check_output([os.environ['HOME'] + "/checks/check_ip.sh", host]), prefixNick=False)
+
 # Pair
     def feralstatus(self,irc,args,host):
         """
