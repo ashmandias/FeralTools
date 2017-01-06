@@ -88,9 +88,10 @@ class FeralTools(callbacks.Plugin):
         nicks = irc.state.channels[feral_channel].users
         #channel_state = irc.state.channels[feral_channel]
         #nicks = list(channel_state.users)
-        reply = [ "Helpful commands: ask(just ask), autodl(use any watchdir), cloudmonitor(widespread ping), faq(faq location), "
-                ,"                  payments(payment status and info), quota(how to check quota), reroute(how to reroute), "
-                ,"                  status(checks status), urls(lists client urls), vpn(how to set up OpenVPN)"
+        reply = [ "Helpful commands: ask [$user] (just ask), autodl [$user] (use any watchdir), cloudmonitor $host (widespread ping), faq [$user] (faq location), "
+                ,"                  help $user (send this help), helpus $user (tell them how to get help), payments [$user] (payment status and info),"
+                ,"                  quota [$user] (how to check quota), reroute(how to reroute), status $host [details] (checks status), "
+                ,"                  urls [$user] (lists client urls), vpn [$user] (how to set up OpenVPN)"
                 , "Joke    commands: cthulhu, kitten, kittens, vampire" ]
         if len(args) >=1 and ircutils.isNick(args[0]) and args[0] in nicks:
             irc.reply(args[0] + " : I am sending you help information in a private message. Please review it. You can test the command via PM if you like.", prefixNick=False)
@@ -175,7 +176,7 @@ class FeralTools(callbacks.Plugin):
         irc.reply(check_output([os.environ['HOME'] + "/checks/check_ip.sh", host]), prefixNick=False)
 
 # Pair
-    def feralstatus(self,irc,args,host):
+    def feralstatus(self,irc,args,host,details):
         """
         Usage: feralstatus HOST - this will send 3 pings, and then check for FTP and SSH connectivity.
         """
@@ -183,25 +184,29 @@ class FeralTools(callbacks.Plugin):
         if not host.isalpha():
             irc.reply("Please use only the short hostname of a feral host")
             return
-        irc.reply(check_output([os.environ['HOME'] + "/checks/check_server.sh", host]), prefixNick=False)
+        irc.reply(check_output([os.environ['HOME'] + "/checks/check_server.sh", host, details]), prefixNick=False)
 
     #def status(self, irc, msg, args, host):
     def status(self, irc, msg, args):
         """
-        Usage: feralstatusthread HOST - this will send 3 pings, and then check for FTP and SSH connectivity.
+        Usage: status HOST [details] - this will send 3 pings, and then check for FTP and SSH connectivity.
         """
         if len(args) >=1:
             host=args[0]
         else:
             irc.reply("Please use the command \"status HOST\"")
             return
-        if host.lower() == "leon":
+        if len(args) >=2:
+            details='true'
+        else:
+            details='false'
+#        if host.lower() == "leon":
 #            irc.reply("Latest Staff update on Leon as of Jan 4, 2017: most likely a hardware fault (NIC), need to fly over to work on it.", prefixNick=False)
-            irc.reply("Host appears to be in the process of booting, please be patient while services restart.", prefixNick=False)
+#            irc.reply("Leon specific information: Host appears to be being worked on, please be patient while all services are restored.", prefixNick=False)
 #            return
-        check_thread = threading.Thread(target=self.feralstatus, args=(irc,args,host))
+        check_thread = threading.Thread(target=self.feralstatus, args=(irc,args,host,details))
         check_thread.start()
-        irc.reply("Feral status:|https://status.feral.io/| Overview status:|https://thehawken.org/fs.|, specific host status to follow shortly...", prefixNick=False)
+        irc.reply("Feral status: https://status.feral.io/ | Overview status: https://thehawken.org/fs |, specific host status to follow shortly...", prefixNick=False)
 #        status = wrap(status,['anything'])
 #/Pair
 
