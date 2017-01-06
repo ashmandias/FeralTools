@@ -80,7 +80,6 @@ class FeralTools(callbacks.Plugin):
         """
         formats replies
         """
-        print (args)
 	if len(args) >=2:
             reply = str(args[1]) + ": " + str(args[0])
         irc.reply(reply, prefixNick=False)
@@ -129,7 +128,6 @@ class FeralTools(callbacks.Plugin):
         """
         "Please don't ask to ask, just ask your question"
         """
-        print (args)
         reply = "Please don't ask to ask, just ask your question"
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
@@ -138,7 +136,6 @@ class FeralTools(callbacks.Plugin):
     def autodl(self, irc, msg, args):
         """
         """
-        print (args)
         reply = "Tip: autodl-irssi can be used with any torrent client -- just use the watchdir action, and point the torrent at the appropriate watchdir. More here: " + URL_faq_autodl
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
@@ -148,8 +145,7 @@ class FeralTools(callbacks.Plugin):
         """
         helper for \"Make sure autodl-irssi is started and configured properly\" regex
         """
-        print (args)
-        reply = "If you are getting the error \"Make sure autodl-irssi is started and configured properly\", make sure one, and only one instance of irssi is running. If this does not resolve the issue, please run the script at :" + URL_faq_autodl
+        reply = "If you are getting the error \"Make sure autodl-irssi is started and configured properly\", make sure one, and only one instance of irssi is running. If this does not resolve the issue, please run the script at: " + URL_faq_autodl
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
@@ -157,7 +153,6 @@ class FeralTools(callbacks.Plugin):
     def cloudmonitor(self, irc, msg, args, host):
         """
         """
-       # print (args)
         host = str.replace(host,".feralhosting.com","")
         reply = "To view a worldwide ping to " + host + ", please visit the following link:http://cloudmonitor.ca.com/en/ping.php?vtt=1387589430&varghost=" + host + ".feralhosting.com&vhost=_&vaction=ping&ping=start"
         if len(args) >=1:
@@ -169,7 +164,6 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: faq [user] reply (optionally to a different user) with the FAQ location
         """
-        print (args)
         reply = "You can find the Feral FAQ at " + URL_faq
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
