@@ -44,6 +44,7 @@ feral_channel = "##feral"
 # FAQ URLs
 URL_faq = "https://github.com/feralhosting/faqs-cached"
 URL_faq_reroute = "https://www.feralhosting.com/faq/view?question=292"
+URL_faq_restart = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md"
 URL_faq_ssh = "https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md"
 
 # Other URLS
@@ -261,6 +262,15 @@ class FeralTools(callbacks.Plugin):
         Usage: 
         """
         reply = "Typically speed issues between you and feral (downloading files to your home) are a result of issues on your ISP. You can attempt to reroute traffic around the problem with " + URL_reroute + " or " + URL_faq_reroute + " (if you have Bash installed locally)"
+        if len(args) >=1:
+            reply = str(args[0]) + ": " + reply
+        irc.reply(reply, prefixNick=False)
+
+    def restart(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "Please see the FAQ here on how to restart software" + URL_faq_restart
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
