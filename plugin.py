@@ -48,6 +48,7 @@ URL_faq_restart = "https://github.com/feralhosting/faqs-cached/blob/master/02%20
 URL_faq_ssh = "https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md"
 
 # Other URLS
+URL_irc_help = "http://rurounijones.github.io/blog/2009/03/17/how-to-ask-for-help-on-irc/"
 URL_OpenVPN = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md"
 URL_passwords = "https://github.com/ashmandias/FeralInfo#password-questions"
 URL_payments = "https://github.com/ashmandias/FeralInfo#payments"
@@ -108,9 +109,10 @@ class FeralTools(callbacks.Plugin):
         nicks = irc.state.channels[feral_channel].users
         #channel_state = irc.state.channels[feral_channel]
         #nicks = list(channel_state.users)
-        reply = ["Help us help you. Please include a description of any problem you are having, along with any relevant information -- such as what you are doing,"
-                , "trying to do, or what guide you are following."
-                , "Additionally, most issues are isolated to one server (or even one account), so please tell us what service and server you are on" ]
+        reply = ["Help us help you. Please include a description of any problem you are having, along with any relevant information -- "
+                , "such as what you are doing, trying to do, or what guide you are following."
+                , "Additionally, most issues are isolated to one server (or even one account), so please tell us what service and server you are on" 
+                , "Tips for getting help on IRC can be found at: " + URL_irc_help ]
                 
         if len(args) >=1 and ircutils.isNick(args[0]) and args[0] in nicks:
             irc.reply(args[0] + " : I am sending you information on how to get the most valuable help, and how to help us help you.", prefixNick=False)
