@@ -73,7 +73,6 @@ if [[ "${FTP}" -eq 1 ]]; then
 else
 	FTP_RETURN="Down"
 fi
-
 FTP_STATUS="$(format_service_string "FTP" "${FTP_RETURN}" "(banner checked on port 21)")"
 
 SSH="$( echo "quit" | timeout "${TIMEOUT}" nc "${HOST}" 22 2> /dev/null | grep -c "${SSH_SERVER}")" 2> /dev/null
@@ -83,7 +82,6 @@ if [[ "${SSH}" -eq 1 ]]; then
 else
 	SSH_RETURN="Down"
 fi
-
 SSH_STATUS="$(format_service_string "SSH" "${SSH_RETURN}" "(banner checked on port 22)")"
 
 HTTP=$(timeout ${TIMEOUT} curl "${HOST}" -s > /dev/null; echo $?)
@@ -92,19 +90,14 @@ if [[ "${HTTP}" -eq 0 ]]; then
 else
 	HTTP_RETURN="Down"
 fi
-
 HTTP_STATUS="$(format_service_string "HTTP" "${HTTP_RETURN}" "(Server-wide, not per-user)")"
 
 PING="$(timeout "${TIMEOUT}" ping -A -q -c "${PING_COUNT}" "${HOST}" | grep transmitted)"
-
 if [[ "${PING}x" == "x" ]]; then
 	PING="100"
 fi
-
 [[ "${PING}" =~ [0-9]+% ]]
-
 PING_PERCENT="${BASH_REMATCH}"
-
 PING_STATUS="$(format_service_string "Ping" "${BASH_REMATCH} loss" "(Based on ${PING_COUNT} Pings)")"
 
 if [[ "${DETAILS}" == "true" ]]; then
