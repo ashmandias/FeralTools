@@ -145,7 +145,7 @@ class FeralTools(callbacks.Plugin):
         """
         helper for \"Make sure autodl-irssi is started and configured properly\" regex
         """
-        reply = "If you are getting the error \"Make sure autodl-irssi is started and configured properly\", make sure one, and only one instance of irssi is running. If this does not resolve the issue, please run the script at: " + URL_faq_autodl
+        reply = "If you are getting the error \"" + chr(3)+"07" + "Make sure autodl-irssi is started and configured properly" + chr(3) + "\", make sure one, and only one instance of irssi is running. If this does not resolve the issue, please run the script at: " + URL_faq_autodl
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
@@ -185,7 +185,7 @@ class FeralTools(callbacks.Plugin):
         irc.reply(check_output([os.environ['HOME'] + "/checks/check_ip.sh", host]), prefixNick=False)
 
 # Pair
-    def feralstatus(self,irc,args,host,details):
+    def _status(self,irc,args,host,details):
         """
         Usage: feralstatus HOST - this will send 3 pings, and then check for FTP and SSH connectivity.
         """
@@ -213,7 +213,7 @@ class FeralTools(callbacks.Plugin):
 #            irc.reply("Latest Staff update on Leon as of Jan 4, 2017: most likely a hardware fault (NIC), need to fly over to work on it.", prefixNick=False)
 #            irc.reply("Leon specific information: Host appears to be being worked on, please be patient while all services are restored.", prefixNick=False)
 #            return
-        check_thread = threading.Thread(target=self.feralstatus, args=(irc,args,host,details))
+        check_thread = threading.Thread(target=self._status, args=(irc,args,host,details))
         check_thread.start()
         irc.reply("Feral status: https://status.feral.io/ | Overview status: https://thehawken.org/fs | specific host status to follow shortly...", prefixNick=False)
 #        status = wrap(status,['anything'])
