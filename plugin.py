@@ -278,7 +278,16 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: 
         """
-        reply = "Please see the FAQ here on how to restart software" + URL_faq_restart
+        reply = "Please see the FAQ here on how to restart software: " + URL_faq_restart
+        if len(args) >=1:
+            reply = str(args[0]) + ": " + reply
+        irc.reply(reply, prefixNick=False)
+
+    def rtorrenterror(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "The error \"" + chr(3) + "07torrent list not yet available connection to rtorrent not established" + chr(3) + "\" typically means rtorrent is either busy, or not running. Try to restart it with: " + URL_faq_restart
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
