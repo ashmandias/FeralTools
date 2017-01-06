@@ -38,22 +38,24 @@ from subprocess import check_output
 import subprocess
 import threading
 import os
+import tinyurl
 
 feral_channel = "##feral"
 
 # FAQ URLs
 URL_faq = "https://github.com/feralhosting/faqs-cached"
+URL_faq_autodl = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/d97a46ecb29cd4ada80ea1647f60ce6b683c71f8/08%20Software/04%20Autodl-irssi%20-%20Installation%20and%20Configuration.md")
 URL_faq_reroute = "https://www.feralhosting.com/faq/view?question=292"
-URL_faq_restart = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md"
-URL_faq_ssh = "https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md"
+URL_faq_restart = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md")
+URL_faq_ssh = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md")
 
 # Other URLS
 URL_irc_help = "http://rurounijones.github.io/blog/2009/03/17/how-to-ask-for-help-on-irc/"
-URL_OpenVPN = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md"
+URL_OpenVPN = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md")
 URL_passwords = "https://github.com/ashmandias/FeralInfo#password-questions"
 URL_payments = "https://github.com/ashmandias/FeralInfo#payments"
 URL_pricing = "http://web.archive.org/web/20160220120121/https://www.feralhosting.com/pricing"
-URL_quota = "https://github.com/feralhosting/feralfilehosting/tree/master/Feral%20Wiki/SSH/Check%20your%20disk%20quota%20in%20SSH"
+URL_quota = tinyurl.create_one("https://github.com/feralhosting/feralfilehosting/tree/master/Feral%20Wiki/SSH/Check%20your%20disk%20quota%20in%20SSH")
 URL_urls = "https://github.com/ashmandias/FeralInfo#application-access"
 URL_reroute = "https://network.feral.io/reroute"
 URL_vampire = "http://www.skidmore.edu/~pdwyer/e/eoc/help_vampire.htm"
@@ -92,9 +94,9 @@ class FeralTools(callbacks.Plugin):
         #nicks = list(channel_state.users)
         reply = [ "Helpful commands: ask [$user] (just ask), autodl [$user] (use any watchdir), cloudmonitor $host (widespread ping), faq [$user] (faq location), "
                 ,"                  help $user (send this help), helpus $user (tell them how to get help), payments [$user] (payment status and info),"
-                ,"                  quota [$user] (how to check quota), reroute(how to reroute), status $host [details] (checks status), "
+                ,"                  quota [$user] (how to check quota), reroute (how to reroute), status $host [details] (checks status), "
                 ,"                  urls [$user] (lists client urls), vpn [$user] (how to set up OpenVPN)"
-                , "Joke    commands: cthulhu, kitten, kittens, vampire" ]
+                , "Joke    commands: cthulhu, kitten, kittens, vampire, westworld" ]
         if len(args) >=1 and ircutils.isNick(args[0]) and args[0] in nicks:
             irc.reply(args[0] + " : I am sending you help information in a private message. Please review it. You can test the command via PM if you like.", prefixNick=False)
             for message in reply:
@@ -110,7 +112,7 @@ class FeralTools(callbacks.Plugin):
         #channel_state = irc.state.channels[feral_channel]
         #nicks = list(channel_state.users)
         reply = ["Help us help you. Please include a description of any problem you are having, along with any relevant information -- "
-                , "such as what you are doing, trying to do, or what guide you are following."
+                , "such as what you are doing, trying to do, or what guide you are following, and any errors you are getting."
                 , "Additionally, most issues are isolated to one server (or even one account), so please tell us what service and server you are on" 
                 , "Tips for getting help on IRC can be found at: " + URL_irc_help ]
                 
@@ -137,7 +139,17 @@ class FeralTools(callbacks.Plugin):
         """
         """
         print (args)
-        reply = "autodl-irssi can be used with any torrent client -- just use the watchdir action, and point the torrent at the appropriate watchdir"
+        reply = "Tip: autodl-irssi can be used with any torrent client -- just use the watchdir action, and point the torrent at the appropriate watchdir. More here: " + URL_faq_autodl
+        if len(args) >=1:
+            reply = str(args[0]) + ": " + reply
+        irc.reply(reply, prefixNick=False)
+
+    def autodlerror(self, irc, msg, args):
+        """
+        helper for \"Make sure autodl-irssi is started and configured properly\" regex
+        """
+        print (args)
+        reply = "If you are getting the error \"Make sure autodl-irssi is started and configured properly\", make sure one, and only one instance of irssi is running. If this does not resolve the issue, please run the script at :" + URL_faq_autodl
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
