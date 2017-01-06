@@ -206,7 +206,7 @@ class FeralTools(callbacks.Plugin):
 #            return
         check_thread = threading.Thread(target=self.feralstatus, args=(irc,args,host,details))
         check_thread.start()
-        irc.reply("Feral status: https://status.feral.io/ | Overview status: https://thehawken.org/fs |, specific host status to follow shortly...", prefixNick=False)
+        irc.reply("Feral status: https://status.feral.io/ | Overview status: https://thehawken.org/fs | specific host status to follow shortly...", prefixNick=False)
 #        status = wrap(status,['anything'])
 #/Pair
 
@@ -320,6 +320,16 @@ class FeralTools(callbacks.Plugin):
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
+
+    def westworld(self, irc, msg, args):
+        """
+        Usage:
+        """
+        reply = "Nothing can possibly go wrong... go wrong... go wrong... go wrong..."
+        if len(args) >=1:
+            reply = str(args[0]) + ": " + reply
+        irc.reply(reply, prefixNick=False)
+
 Class = FeralTools
 
 
