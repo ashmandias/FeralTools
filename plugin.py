@@ -95,8 +95,9 @@ class FeralTools(callbacks.Plugin):
                 ,"                  help $user (send this help), helpus $user (tell them how to get help), payments [$user] (payment status and info),"
                 ,"                  quota [$user] (how to check quota), reroute (how to reroute), status $host [details] (checks status), "
                 ,"                  urls [$user] (lists client urls), vpn [$user] (how to set up OpenVPN)"
+                ,"Tracker commands: (check the status of services at various trackers) btn, pth, ptp"
                 , "Joke    commands: cthulhu, kitten, kittens, vampire, westworld" ]
-        if len(args) >=1 and ircutils.isNick(args[0]) and args[0] in nicks:
+        if len(args) >=1 and (ircutils.isNick(args[0]) and  args[0] in nicks) or args[0] == '##feral-chat':
             irc.reply(args[0] + " : I am sending you help information in a private message. Please review it. You can test the command via PM if you like.", prefixNick=False)
             for message in reply:
                 irc.queueMsg(ircmsgs.notice(args[0],message))
@@ -159,6 +160,15 @@ class FeralTools(callbacks.Plugin):
             reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
         cloudmonitor = wrap(cloudmonitor,['anything'])
+
+    def eta(self, irc, msg, args):
+        """
+        Usage: eta [user] reply (optionally to a different user) with the feral ETA policy
+        """
+        reply = "Feralhosting typically does not give ETAs on ongoing work. They prefer to focus on getting a solution in place over making estimates. They try to reply to tickets and emails in under 1 business day."
+        if len(args) >=1:
+            reply = str(args[0]) + ": " + reply
+        irc.reply(reply, prefixNick=False)
 
     def faq(self, irc, msg, args):
         """
@@ -251,7 +261,7 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: 
         """
-        reply = "You can either run 'du --si -s ~' in ssh, or follow " + URL_quota
+        reply = "You can either run 'du --si -s ~' in ssh, or follow " + URL_quota + " to tell how much disk space you are using. 'df -h / ~' will check the free space on the OS drive (/) and your drive (~) as well"
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
