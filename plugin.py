@@ -44,8 +44,9 @@ feral_channel = "##feral"
 
 # FAQ URLs
 URL_faq = "https://github.com/feralhosting/faqs-cached"
-URL_faq_autodl = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/d97a46ecb29cd4ada80ea1647f60ce6b683c71f8/08%20Software/04%20Autodl-irssi%20-%20Installation%20and%20Configuration.md")
-URL_faq_reroute = "https://www.feralhosting.com/faq/view?question=292"
+URL_faq_autodl = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/04%20Autodl-irssi%20-%20Installation%20and%20Configuration.md")
+URL_faq_plex = "https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/27%20Plex.md"
+URL_faq_reroute = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/master/06%20Other%20software/04%20Automated%20Reroute.md")
 URL_faq_restart = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md")
 URL_faq_ssh = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md")
 
@@ -244,6 +245,15 @@ class FeralTools(callbacks.Plugin):
         Usage: 
         """
         reply = "Please see  " + URL_payments + " (or the topic) for payment details"
+        if len(args) >=1:
+            reply = str(args[0]) + ": " + reply
+        irc.reply(reply, prefixNick=False)
+
+    def plex(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "Plex is now available. Please see: " + URL_faq_plex + " for details"
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
