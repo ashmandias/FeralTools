@@ -42,28 +42,34 @@ import tinyurl
 import dns
 
 feral_channel = "##feral"
-fake_host = "fakistan"
+max_url_length = 15
+
+def shortenURL(url):
+    if len(url) > max_url_length:
+        return tinyurl.create_one(url)
+    else:
+        return url
 
 # FAQ URLs
-URL_faq = "https://github.com/feralhosting/faqs-cached"
-URL_faq_autodl = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/04%20Autodl-irssi%20-%20Installation%20and%20Configuration.md")
-URL_faq_plex = "https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/27%20Plex.md"
-URL_faq_reroute = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/master/06%20Other%20software/04%20Automated%20Reroute.md")
-URL_faq_restart = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md")
-URL_faq_ssh = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md")
+URL_faq         = shortenURL("https://github.com/feralhosting/faqs-cached")
+URL_faq_autodl  = shortenURL("https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/04%20Autodl-irssi%20-%20Installation%20and%20Configuration.md")
+URL_faq_plex    = shortenURL("https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/27%20Plex.md")
+URL_faq_reroute = shortenURL("https://github.com/feralhosting/faqs-cached/blob/master/06%20Other%20software/04%20Automated%20Reroute.md")
+URL_faq_restart = shortenURL("https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md")
+URL_faq_ssh     = shortenURL("https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md")
 
 # Other URLS
-URL_irc_help = "http://rurounijones.github.io/blog/2009/03/17/how-to-ask-for-help-on-irc/"
-URL_OpenVPN = tinyurl.create_one("https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md")
-URL_passwords = "https://github.com/ashmandias/FeralInfo#password-questions"
-URL_payments = "https://github.com/ashmandias/FeralInfo#payments"
-URL_pricing = "http://web.archive.org/web/20160220120121/https://www.feralhosting.com/pricing"
-URL_quota = tinyurl.create_one("https://github.com/feralhosting/feralfilehosting/tree/master/Feral%20Wiki/SSH/Check%20your%20disk%20quota%20in%20SSH")
-URL_urls = "https://github.com/ashmandias/FeralInfo#application-access"
-URL_reroute = "https://network.feral.io/reroute"
-URL_vampire = "http://www.skidmore.edu/~pdwyer/e/eoc/help_vampire.htm"
-URL_kitten = "http://www.emergencykitten.com/"
-URL_kittens = "http://thecatapi.com/"
+URL_irc_help    = shortenURL("http://rurounijones.github.io/blog/2009/03/17/how-to-ask-for-help-on-irc/")
+URL_OpenVPN     = shortenURL("https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md")
+URL_passwords   = shortenURL("https://github.com/ashmandias/FeralInfo#password-questions")
+URL_payments    = shortenURL("https://github.com/ashmandias/FeralInfo#payments")
+URL_pricing     = shortenURL("http://web.archive.org/web/20160220120121/https://www.feralhosting.com/pricing")
+URL_quota       = shortenURL("https://github.com/feralhosting/feralfilehosting/tree/master/Feral%20Wiki/SSH/Check%20your%20disk%20quota%20in%20SSH")
+URL_urls        = shortenURL("https://github.com/ashmandias/FeralInfo#application-access")
+URL_reroute     = shortenURL("https://network.feral.io/reroute")
+URL_vampire     = shortenURL("http://www.skidmore.edu/~pdwyer/e/eoc/help_vampire.htm")
+URL_kitten      = shortenURL("http://www.emergencykitten.com/")
+URL_kittens     = shortenURL("http://thecatapi.com/")
 
 try:
     from supybot.i18n import PluginInternationalization
@@ -161,7 +167,7 @@ class FeralTools(callbacks.Plugin):
         """
         helper for \"Make sure autodl-irssi is started and configured properly\" regex
         """
-        reply = "If you are getting the error \"" ircutils.mircColor("Make sure autodl-irssi is started and configured properly","red") + "\", make sure one, and only one instance of irssi is running. If this does not resolve the issue, please run the script at: " + URL_faq_autodl
+        reply = "If you are getting the error \"" + ircutils.mircColor("Make sure autodl-irssi is started and configured properly","red") + "\", make sure one, and only one instance of irssi is running. If this does not resolve the issue, please run the script at: " + URL_faq_autodl
         self.reply(irc, args, reply)
 
     def cloudmonitor(self, irc, msg, args, host):
@@ -295,7 +301,7 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: 
         """
-        reply = "The error \"" + ircutils.mircColor("07torrent list not yet available connection to rtorrent not established", "red") + "\" typically means rtorrent is either busy, or not running. Try to restart it with: " + URL_faq_restart
+        reply = "The error \"" + ircutils.mircColor("torrent list not yet available connection to rtorrent not established", "red") + "\" typically means rtorrent is either busy, or not running. Try to restart it with: " + URL_faq_restart
         self.reply(irc, args, reply)
 
     def ssh(self, irc, msg, args):
@@ -353,11 +359,8 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: 
         """
-        response = self.validHost("hera")
-        if response[0]:
-            irc.reply("whoop got " + response[1] + " back for " + response[2])
-        else:
-            irc.reply("noop got " + response[1] + " back")
+        irc.reply(shortenURL("google.com"))
+        irc.reply(shortenURL("google.com/asdjfklasjdfkljasdklfjsdklafj"))
 
 Class = FeralTools
 
