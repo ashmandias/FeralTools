@@ -101,7 +101,7 @@ PING_PERCENT="${BASH_REMATCH}"
 PING_STATUS="$(format_service_string "Ping" "${BASH_REMATCH} loss" "(Based on ${PING_COUNT} Pings)")"
 
 if [[ "${DETAILS}" == "true" ]]; then
-	REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} | If not all services are ${COLOR_GOOD}Up${COLOR_END}, troubleshooting issues is a bad idea | Checks preformed from a ${COLOR_GOOD}non-Feral${COLOR_END} host located in ${COLOR_BAD}Canada${COLOR_END}."
+	REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} | If not all services are ${COLOR_GOOD}Up${COLOR_END}, troubleshooting issues is a ${COLOR_BAD}bad${COLOR_END} idea | Checks preformed from a ${COLOR_GOOD}non-Feral${COLOR_END} host located in ${COLOR_BAD}Canada${COLOR_END}."
 else
 	REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} |"
 fi

@@ -91,7 +91,7 @@ class FeralTools(callbacks.Plugin):
         nicks = irc.state.channels[feral_channel].users
         #channel_state = irc.state.channels[feral_channel]
         #nicks = list(channel_state.users)
-        reply = [ "Helpful commands: ask [$user] (just ask), autodl [$user] (use any watchdir), cloudmonitor $host (widespread ping), faq [$user] (faq location), "
+        reply = [ "Helpful commands: ask [$user] (just ask), autodl [$user] (use any watchdir), cloudmonitor $host (widespread ping), eta [$user] (eta policy), faq [$user] (faq location), "
                 ,"                  help $user (send this help), helpus $user (tell them how to get help), payments [$user] (payment status and info),"
                 ,"                  quota [$user] (how to check quota), reroute (how to reroute), status $host [details] (checks status), "
                 ,"                  urls [$user] (lists client urls), vpn [$user] (how to set up OpenVPN)"
