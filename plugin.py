@@ -39,8 +39,10 @@ import subprocess
 import threading
 import os
 import tinyurl
+import dns
 
 feral_channel = "##feral"
+fake_host = "fakistan"
 
 # FAQ URLs
 URL_faq = "https://github.com/feralhosting/faqs-cached"
@@ -77,13 +79,23 @@ class FeralTools(callbacks.Plugin):
     threaded = True
 
 # Helpers
-    def reply(self, irc, msg, args):
+    def reply(self, irc, args, reply):
         """
         formats replies
         """
-	if len(args) >=2:
-            reply = str(args[1]) + ": " + str(args[0])
+        if len(args) >=1:
+            reply = str(args[0]) + ": " + reply
         irc.reply(reply, prefixNick=False)
+
+    def validHost(self, host):
+        host = str.replace(host,".feralhosting.com","")
+        myResolver = dns.resolver.Resolver()
+        try:
+            myAnswers = myResolver.query(host + ".feralhosting.com", "A")
+            for rData in myAnswers:
+                return (True,str(rData),host)
+        except:
+            return (False,None,None)
 
     def help(self, irc, msg, args):
         """
@@ -98,12 +110,15 @@ class FeralTools(callbacks.Plugin):
                 ,"                  urls [$user] (lists client urls), vpn [$user] (how to set up OpenVPN)"
                 ,"Tracker commands: (check the status of services at various trackers) btn, pth, ptp"
                 , "Joke    commands: cthulhu, kitten, kittens, vampire, westworld" ]
-        if len(args) >=1 and (ircutils.isNick(args[0]) and  args[0] in nicks) or args[0] == '##feral-chat':
-            irc.reply(args[0] + " : I am sending you help information in a private message. Please review it. You can test the command via PM if you like.", prefixNick=False)
-            for message in reply:
-                irc.queueMsg(ircmsgs.notice(args[0],message))
-        else: 
-            irc.reply("You need to specify a nick in " + feral_channel + " to send to", prefixNick=False)
+        try:
+            if (ircutils.isNick(args[0]) and  args[0] in nicks) or args[0] == '##feral-chat':
+                self.reply(irc, args, reply="I am sending you help information in a private message. Please review it. You can test the command via PM if you like.")
+                for message in reply:
+                    irc.queueMsg(ircmsgs.notice(args[0],message))
+            else: 
+                self.reply(irc, args, "You need to specify a nick in " + feral_channel + " to send to")
+        except:
+            self.reply(irc, args, "You need to specify a nick in " + feral_channel + " to send to")
 
     def helpus(self, irc, msg, args):
         """
@@ -117,12 +132,15 @@ class FeralTools(callbacks.Plugin):
                 , "Additionally, most issues are isolated to one server (or even one account), so please tell us what service and server you are on" 
                 , "Tips for getting help on IRC can be found at: " + URL_irc_help ]
                 
-        if len(args) >=1 and ircutils.isNick(args[0]) and args[0] in nicks:
-            irc.reply(args[0] + " : I am sending you information on how to get the most valuable help, and how to help us help you.", prefixNick=False)
-            for message in reply:
-                irc.queueMsg(ircmsgs.notice(args[0],message))
-        else: 
-            irc.reply("You need to specify a nick in " + feral_channel + " to send to", prefixNick=False)
+        try:
+            if ircutils.isNick(args[0]) and args[0] in nicks:
+                self.reply(irc, args, "I am sending you information on how to get the most valuable help, and how to help us help you.")
+                for message in reply:
+                    irc.queueMsg(ircmsgs.notice(args[0],message))
+            else: 
+                self.reply(irc, args, "You need to specify a nick in " + feral_channel + " to send to")
+        except:
+            self.reply(irc, args, "You need to specify a nick in " + feral_channel + " to send to")
 
 # serious
 
@@ -131,69 +149,60 @@ class FeralTools(callbacks.Plugin):
         "Please don't ask to ask, just ask your question"
         """
         reply = "Please don't ask to ask, just ask your question"
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def autodl(self, irc, msg, args):
         """
         """
         reply = "Tip: autodl-irssi can be used with any torrent client -- just use the watchdir action, and point the torrent at the appropriate watchdir. More here: " + URL_faq_autodl
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def autodlerror(self, irc, msg, args):
         """
         helper for \"Make sure autodl-irssi is started and configured properly\" regex
         """
-        reply = "If you are getting the error \"" + chr(3)+"07" + "Make sure autodl-irssi is started and configured properly" + chr(3) + "\", make sure one, and only one instance of irssi is running. If this does not resolve the issue, please run the script at: " + URL_faq_autodl
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        reply = "If you are getting the error \"" ircutils.mircColor("Make sure autodl-irssi is started and configured properly","red") + "\", make sure one, and only one instance of irssi is running. If this does not resolve the issue, please run the script at: " + URL_faq_autodl
+        self.reply(irc, args, reply)
 
     def cloudmonitor(self, irc, msg, args, host):
         """
         """
         host = str.replace(host,".feralhosting.com","")
         reply = "To view a worldwide ping to " + host + ", please visit the following link:http://cloudmonitor.ca.com/en/ping.php?vtt=1387589430&varghost=" + host + ".feralhosting.com&vhost=_&vaction=ping&ping=start"
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
-        cloudmonitor = wrap(cloudmonitor,['anything'])
+        self.reply(irc, args, reply)
+    cloudmonitor = wrap(cloudmonitor,['anything'])
 
     def eta(self, irc, msg, args):
         """
         Usage: eta [user] reply (optionally to a different user) with the feral ETA policy
         """
         reply = "Feralhosting typically does not give ETAs on ongoing work. They prefer to focus on getting a solution in place over making estimates. They try to reply to tickets and emails in under 1 business day."
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def faq(self, irc, msg, args):
         """
         Usage: faq [user] reply (optionally to a different user) with the FAQ location
         """
         reply = "You can find the Feral FAQ at " + URL_faq
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def ip(self,irc,msg,args):
         """
         Usage: ip HOST
         """
         if len(args) >=1:
-            host=args[0]
+            response = self.validHost(args[0])
         else:
             irc.reply("Please use the command \"ip HOST\"")
             return
-        host = str.replace(host,".feralhosting.com","")
-        if not host.isalpha():
-            irc.reply("Please use only the short hostname of a feral host")
+        host = response[2]
+        if response[0]:
+            ip = response[1]
+            irc.reply("The IP for " + ircutils.mircColor(host.capitalize(),"green") + " is: " + ircutils.mircColor(ip,"green"))
             return
-        irc.reply(check_output([os.environ['HOME'] + "/checks/check_ip.sh", host]), prefixNick=False)
+        else:
+            irc.reply("It appears that " + ircutils.mircColor(args[0],"red")+ " is not a valid name of a feral host")
+            return
 
 # Pair
     def _status(self,irc,args,host,details):
@@ -202,9 +211,9 @@ class FeralTools(callbacks.Plugin):
         """
         host = str.replace(host,".feralhosting.com","")
         if not host.isalpha():
-            irc.reply("Please use only the short hostname of a feral host")
+            self.reply(irc, args, "Please use only the short hostname of a feral host")
             return
-        irc.reply(check_output([os.environ['HOME'] + "/checks/check_server.sh", host, details]), prefixNick=False)
+        self.reply(irc, args, reply=check_output([os.environ['HOME'] + "/checks/check_server.sh", host, details]))
 
     #def status(self, irc, msg, args, host):
     def status(self, irc, msg, args):
@@ -220,14 +229,9 @@ class FeralTools(callbacks.Plugin):
             details='true'
         else:
             details='false'
-#        if host.lower() == "leon":
-#            irc.reply("Latest Staff update on Leon as of Jan 4, 2017: most likely a hardware fault (NIC), need to fly over to work on it.", prefixNick=False)
-#            irc.reply("Leon specific information: Host appears to be being worked on, please be patient while all services are restored.", prefixNick=False)
-#            return
         check_thread = threading.Thread(target=self._status, args=(irc,args,host,details))
         check_thread.start()
-        irc.reply("Feral status: https://status.feral.io/ | Overview status: https://thehawken.org/fs | specific host status to follow shortly...", prefixNick=False)
-#        status = wrap(status,['anything'])
+        self.reply(irc, args, "Feral status: https://status.feral.io/ | Overview status: https://thehawken.org/fs | specific host status to follow shortly...")
 #/Pair
 
 
@@ -236,108 +240,84 @@ class FeralTools(callbacks.Plugin):
         Usage: 
         """
         reply = "Please see the following link for password recovery tips: " + URL_passwords
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def payments(self, irc, msg, args):
         """
         Usage: 
         """
         reply = "Please see  " + URL_payments + " (or the topic) for payment details"
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def plex(self, irc, msg, args):
         """
         Usage: 
         """
         reply = "Plex is now available. Please see: " + URL_faq_plex + " for details"
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def pricing(self, irc, msg, args):
         """
         Usage: 
         """
         reply = "The old pricing page can be found at " + URL_pricing
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def quota(self, irc, msg, args):
         """
         Usage: 
         """
         reply = "You can either run 'du --si -s ~' in ssh, or follow " + URL_quota + " to tell how much disk space you are using. 'df -h / ~' will check the free space on the OS drive (/) and your drive (~) as well"
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def vpn(self, irc, msg, args):
         """
         Usage: vpn [user] reply (optionally to a different user) with OpenVPN install instructions
         """
         reply = "You can find the documentation for installing and configuring OpenVPN at " + URL_OpenVPN
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def reroute(self, irc, msg, args):
         """
         Usage: 
         """
         reply = "Typically speed issues between you and feral (downloading files to your home) are a result of issues on your ISP. You can attempt to reroute traffic around the problem with " + URL_reroute + " or " + URL_faq_reroute + " (if you have Bash installed locally)"
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def restart(self, irc, msg, args):
         """
         Usage: 
         """
         reply = "Please see the FAQ here on how to restart software: " + URL_faq_restart
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def rtorrenterror(self, irc, msg, args):
         """
         Usage: 
         """
-        reply = "The error \"" + chr(3) + "07torrent list not yet available connection to rtorrent not established" + chr(3) + "\" typically means rtorrent is either busy, or not running. Try to restart it with: " + URL_faq_restart
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        reply = "The error \"" + ircutils.mircColor("07torrent list not yet available connection to rtorrent not established", "red") + "\" typically means rtorrent is either busy, or not running. Try to restart it with: " + URL_faq_restart
+        self.reply(irc, args, reply)
 
     def ssh(self, irc, msg, args):
         """
         Usage: 
         """
         reply = "The SSH FAQ can be found at " + URL_faq_ssh
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def urls(self, irc, msg, args):
         """
         Usage: urls [user] reply (optionally to a different user) with URL locations
         """
         reply = "You can find the URLs to access your applications at " + URL_urls
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def vampire(self, irc, msg, args):
         """
         Usage:
         """
         reply = "You might find this link helpful in avoiding feeding (or being) a help vampire: " + URL_vampire
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
 # jokes
 
@@ -346,36 +326,38 @@ class FeralTools(callbacks.Plugin):
         Usage:
         """
         reply = "Ia! Ia! Cthulhu fhtagn! Ph'nglui Mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn!"
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def kitten(self, irc, msg, args):
         """
         Usage:
         """
         reply = "Here, have a kitten! " + URL_kitten
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def kittens(self, irc, msg, args):
         """
         Usage:
         """
         reply = "KITTENS FOR EVERYONE! " + URL_kittens
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
 
     def westworld(self, irc, msg, args):
         """
         Usage:
         """
         reply = "Nothing can possibly go wrong... go wrong... go wrong... go wrong..."
-        if len(args) >=1:
-            reply = str(args[0]) + ": " + reply
-        irc.reply(reply, prefixNick=False)
+        self.reply(irc, args, reply)
+
+    def test(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        response = self.validHost("hera")
+        if response[0]:
+            irc.reply("whoop got " + response[1] + " back for " + response[2])
+        else:
+            irc.reply("noop got " + response[1] + " back")
 
 Class = FeralTools
 
