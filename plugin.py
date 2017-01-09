@@ -43,12 +43,27 @@ import dns
 
 feral_channel = "##feral"
 max_url_length = 15
+feralbot_nick = "FeralBot"
 
 def shortenURL(url):
     if len(url) > max_url_length:
         return tinyurl.create_one(url)
     else:
         return url
+
+def shouldReply(irc, msg):
+    addressedBy = msg.args[0]
+    botCommand = msg.args[1]
+    nicks = irc.state.channels[feral_channel].users
+    
+    irc.reply("bot command: " + botCommand)
+    if not addressedBy.startswith('#'):
+        irc.reply("true, PM")
+    elif botCommand.startswith('*'):
+        irc.reply("true, *")
+    elif botCommand.startswith('!') and feralbot_nick not in nicks:
+        irc.reply("true, feralbot missing")
+
 
 # FAQ URLs
 URL_faq         = shortenURL("https://github.com/feralhosting/faqs-cached")
@@ -371,8 +386,10 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: 
         """
-        irc.reply(shortenURL("google.com"))
-        irc.reply(shortenURL("google.com/asdjfklasjdfkljasdklfjsdklafj"))
+#        irc.reply(shortenURL("google.com"))
+#        irc.reply(shortenURL("google.com/asdjfklasjdfkljasdklfjsdklafj"))
+#        print(msg)
+        shouldReply(irc,msg)
 
 Class = FeralTools
 
