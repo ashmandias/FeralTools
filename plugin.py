@@ -40,6 +40,7 @@ import threading
 import os
 import tinyurl
 import dns
+import re
 
 feral_channel = "##feral"
 max_url_length = 15
@@ -51,45 +52,41 @@ def shortenURL(url):
     else:
         return url
 
-def shouldReply(irc, msg):
+def shouldReply(irc,msg):
     addressedBy = msg.args[0]
     botCommand = msg.args[1]
     nicks = irc.state.channels[feral_channel].users
     
-    irc.reply("bot command: " + botCommand)
     if not addressedBy.startswith('#'):
-        #irc.reply("true, PM")
         return True
     elif botCommand.startswith('*'):
-        #irc.reply("true, *")
         return True
     elif botCommand.startswith('!') and feralbot_nick not in nicks:
-        #irc.reply("true, feralbot missing")
         return True
     else:
         return False
 
 
 # FAQ URLs
-URL_faq         = shortenURL("https://github.com/feralhosting/faqs-cached")
-URL_faq_autodl  = shortenURL("https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/04%20Autodl-irssi%20-%20Installation%20and%20Configuration.md")
-URL_faq_plex    = shortenURL("https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/27%20Plex.md")
-URL_faq_reroute = shortenURL("https://github.com/feralhosting/faqs-cached/blob/master/06%20Other%20software/04%20Automated%20Reroute.md")
-URL_faq_restart = shortenURL("https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md")
-URL_faq_ssh     = shortenURL("https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md")
+URL_faq         = "https://github.com/feralhosting/faqs-cached"
+URL_faq_autodl  = "https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/04%20Autodl-irssi%20-%20Installation%20and%20Configuration.md"
+URL_faq_plex    = "https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/27%20Plex.md"
+URL_faq_reroute = "https://github.com/feralhosting/faqs-cached/blob/master/06%20Other%20software/04%20Automated%20Reroute.md"
+URL_faq_restart = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md"
+URL_faq_ssh     = "https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md"
 
 # Other URLS
-URL_irc_help    = shortenURL("http://rurounijones.github.io/blog/2009/03/17/how-to-ask-for-help-on-irc/")
-URL_OpenVPN     = shortenURL("https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md")
-URL_passwords   = shortenURL("https://github.com/ashmandias/FeralInfo#password-questions")
-URL_payments    = shortenURL("https://github.com/ashmandias/FeralInfo#payments")
-URL_pricing     = shortenURL("http://web.archive.org/web/20160220120121/https://www.feralhosting.com/pricing")
-URL_quota       = shortenURL("https://github.com/feralhosting/feralfilehosting/tree/master/Feral%20Wiki/SSH/Check%20your%20disk%20quota%20in%20SSH")
-URL_urls        = shortenURL("https://github.com/ashmandias/FeralInfo#application-access")
-URL_reroute     = shortenURL("https://network.feral.io/reroute")
-URL_vampire     = shortenURL("http://www.skidmore.edu/~pdwyer/e/eoc/help_vampire.htm")
-URL_kitten      = shortenURL("http://www.emergencykitten.com/")
-URL_kittens     = shortenURL("http://thecatapi.com/")
+URL_irc_help    = "http://rurounijones.github.io/blog/2009/03/17/how-to-ask-for-help-on-irc/"
+URL_OpenVPN     = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md"
+URL_passwords   = "https://github.com/ashmandias/FeralInfo#password-questions"
+URL_payments    = "https://github.com/ashmandias/FeralInfo#payments"
+URL_pricing     = "http://web.archive.org/web/20160220120121/https://www.feralhosting.com/pricing"
+URL_quota       = "https://github.com/feralhosting/feralfilehosting/tree/master/Feral%20Wiki/SSH/Check%20your%20disk%20quota%20in%20SSH"
+URL_urls        = "https://github.com/ashmandias/FeralInfo#application-access"
+URL_reroute     = "https://network.feral.io/reroute"
+URL_vampire     = "http://www.skidmore.edu/~pdwyer/e/eoc/help_vampire.htm"
+URL_kitten      = "http://www.emergencykitten.com/"
+URL_kittens     = "http://thecatapi.com/"
 
 try:
     from supybot.i18n import PluginInternationalization
@@ -111,6 +108,9 @@ class FeralTools(callbacks.Plugin):
         """
         if len(args) >=1:
             reply = str(args[0]) + ": " + reply
+        matches=re.findall("(?P<url>https?://[^\s]+)", reply)
+        for match in matches:
+            reply = reply.replace(match,shortenURL(match))
         irc.reply(reply, prefixNick=False)
 
     def validHost(self, host):
@@ -392,10 +392,16 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: 
         """
-#        irc.reply(shortenURL("google.com"))
-#        irc.reply(shortenURL("google.com/asdjfklasjdfkljasdklfjsdklafj"))
-#        print(msg)
-        shouldReply(irc,msg)
+#        if shouldReply(irc,msg):
+#            irc.reply("I should reply")
+        reply = "You might find this link helpful in avoiding feeding (or being) a help vampire: http://google.com http://fark.com https://reallylongurlforshitssake.com"
+        matches=re.findall("(?P<url>https?://[^\s]+)", reply)
+        for match in matches:
+            reply = reply.replace(match,shortenURL(match))
+        #url=re.search("(?P<url>https?://[^\s]+)", reply).group("url")
+        irc.reply(reply)
+        
+        
 
 Class = FeralTools
 
