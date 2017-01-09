@@ -58,11 +58,16 @@ def shouldReply(irc, msg):
     
     irc.reply("bot command: " + botCommand)
     if not addressedBy.startswith('#'):
-        irc.reply("true, PM")
+        #irc.reply("true, PM")
+        return True
     elif botCommand.startswith('*'):
-        irc.reply("true, *")
+        #irc.reply("true, *")
+        return True
     elif botCommand.startswith('!') and feralbot_nick not in nicks:
-        irc.reply("true, feralbot missing")
+        #irc.reply("true, feralbot missing")
+        return True
+    else:
+        return False
 
 
 # FAQ URLs
@@ -126,16 +131,17 @@ class FeralTools(callbacks.Plugin):
         #channel_state = irc.state.channels[feral_channel]
         #nicks = list(channel_state.users)
         reply = [ "Helpful commands: ask [$user] (just ask), autodl [$user] (use any watchdir), cloudmonitor $host (widespread ping), eta [$user] (eta policy), faq [$user] (faq location), "
-                ,"                  help $user (send this help), helpus $user (tell them how to get help), payments [$user] (payment status and info),"
-                ,"                  quota [$user] (how to check quota), reroute (how to reroute), status $host [details] (checks status), "
-                ,"                  urls [$user] (lists client urls), vpn [$user] (how to set up OpenVPN)"
-                ,"Tracker commands: (check the status of services at various trackers) btn, pth, ptp"
+                , "                  help $user (send this help), helpus $user (tell them how to get help), payments [$user] (payment status and info),"
+                , "                  quota [$user] (how to check quota), reroute (how to reroute), status $host [details] (checks status), "
+                , "                  urls [$user] (lists client urls), vpn [$user] (how to set up OpenVPN)"
+                , "Tracker commands: (check the status of services at various trackers) btn, pth, ptp"
                 , "Joke    commands: cthulhu, kitten, kittens, vampire, westworld" ]
         try:
-            if (ircutils.isNick(args[0]) and  args[0] in nicks) or args[0] == '##feral-chat':
+            nick = args[0]
+            if (ircutils.isNick(nick) and  nick in nicks) or nick == '##feral-chat':
                 self.reply(irc, args, reply="I am sending you help information in a private message. Please review it. You can test the command via PM if you like.")
                 for message in reply:
-                    irc.queueMsg(ircmsgs.notice(args[0],message))
+                    irc.queueMsg(ircmsgs.notice(nick,message))
             else: 
                 self.reply(irc, args, "You need to specify a nick in " + feral_channel + " to send to")
         except:
