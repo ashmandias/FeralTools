@@ -150,6 +150,13 @@ class FeralTools(callbacks.Plugin):
 
 # serious
 
+    def accessdenied(self, irc, msg, args):
+        """
+        What "access denied" means
+        """
+        reply = "If you are getting \"" + ircutils.mircColor("Access Denied","red") + "\" when attempting to SSH into your server, either you are not using the SSH password (different than most of the others), you have the wrong username, or you have the wrong hostname."
+        self.reply(irc, args, reply)
+
     def ask(self, irc, msg, args):
         """
         "Please don't ask to ask, just ask your question"
@@ -172,10 +179,15 @@ class FeralTools(callbacks.Plugin):
 
     def cloudmonitor(self, irc, msg, args, host):
         """
+        $host
         """
-        host = str.replace(host,".feralhosting.com","")
-        reply = "To view a worldwide ping to " + host + ", please visit the following link:http://cloudmonitor.ca.com/en/ping.php?vtt=1387589430&varghost=" + host + ".feralhosting.com&vhost=_&vaction=ping&ping=start"
+        response=self.validHost(host)
+        if response[0]:
+            reply = "To view a worldwide ping to " + ircutils.mircColor(host.capitalize(), "green") + ", please visit the following link:http://cloudmonitor.ca.com/en/ping.php?vtt=1387589430&varghost=" + host + ".feralhosting.com&vhost=_&vaction=ping&ping=start"
+        else:
+            reply = "The host: " + ircutils.mircColor(host.capitalize(), "red") + " does not appear to be a valid Feral host."
         self.reply(irc, args, reply)
+            
     cloudmonitor = wrap(cloudmonitor,['anything'])
 
     def eta(self, irc, msg, args):
@@ -219,7 +231,7 @@ class FeralTools(callbacks.Plugin):
         if not host.isalpha():
             self.reply(irc, args, "Please use only the short hostname of a feral host")
             return
-        self.reply(irc, args, reply=check_output([os.environ['HOME'] + "/checks/check_server.sh", host, details]))
+        irc.reply(check_output([os.environ['HOME'] + "/checks/check_server.sh", host, details]), prefixNick=False)
 
     #def status(self, irc, msg, args, host):
     def status(self, irc, msg, args):
@@ -237,7 +249,7 @@ class FeralTools(callbacks.Plugin):
             details='false'
         check_thread = threading.Thread(target=self._status, args=(irc,args,host,details))
         check_thread.start()
-        self.reply(irc, args, "Feral status: https://status.feral.io/ | Overview status: https://thehawken.org/fs | specific host status to follow shortly...")
+        irc.reply("Feral status: https://status.feral.io/ | Overview status: https://thehawken.org/fs | specific host status to follow shortly...", prefixNick=False)
 #/Pair
 
 
@@ -301,7 +313,7 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: 
         """
-        reply = "The error \"" + ircutils.mircColor("torrent list not yet available connection to rtorrent not established", "red") + "\" typically means rtorrent is either busy, or not running. Try to restart it with: " + URL_faq_restart
+        reply = "The errors\"" + ircutils.mircColor("torrent list not yet available connection to rtorrent not established", "red") + "\" or \"" + ircutils.mircColor("No connection to rTorrent. Check if it is really running.", "red") + "\" typically means rtorrent is either busy, or not running. Try to restart it with: " + URL_faq_restart
         self.reply(irc, args, reply)
 
     def ssh(self, irc, msg, args):
