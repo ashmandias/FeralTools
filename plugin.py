@@ -41,10 +41,12 @@ import os
 import tinyurl
 import dns
 import re
+import urllib
 
 feral_channel = "##feral"
 max_url_length = 15
-feralbot_nick = "FeralBot"
+feralbotNick = "FeralBot"
+hadalyNick = "Hadaly"
 
 def shortenURL(url):
     if len(url) > max_url_length:
@@ -55,17 +57,39 @@ def shortenURL(url):
 def shouldReply(irc,msg):
     addressedBy = msg.args[0]
     botCommand = msg.args[1]
-    nicks = irc.state.channels[feral_channel].users
+
+    if addressedBy.startswith('#'):
+        nicks = irc.state.channels[addressedBy].users
+    else:
+        return True
     
-    if not addressedBy.startswith('#'):
+    if botCommand.startswith('*'):
         return True
-    elif botCommand.startswith('*'):
+    elif botCommand.startswith('!') and feralbotNick not in nicks:
         return True
-    elif botCommand.startswith('!') and feralbot_nick not in nicks:
+    elif botCommand.startswith('!') and hadalyNick not in nicks:
         return True
     else:
         return False
 
+
+def wrapHelp(prefix,toWrap):
+    lineLength = 300
+    reply = [prefix]
+    line = 0
+    for element in sorted(toWrap):
+        if len(element) == 2:
+            command = element[0]
+            description = ": " + element[1]
+        else:
+            command = element
+            description = ""
+        if len(reply[line]) + len(str(command) + str(description)) < lineLength:
+            reply[line] += " " + ircutils.mircColor(command, "green") + description + ","
+        else:
+            line += 1
+            reply.append(ircutils.mircColor(command, "green") + ",")
+    return reply
 
 # FAQ URLs
 URL_faq         = "https://github.com/feralhosting/faqs-cached"
@@ -73,9 +97,11 @@ URL_faq_autodl  = "https://github.com/feralhosting/faqs-cached/blob/master/08%20
 URL_faq_plex    = "https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/27%20Plex.md"
 URL_faq_reroute = "https://github.com/feralhosting/faqs-cached/blob/master/06%20Other%20software/04%20Automated%20Reroute.md"
 URL_faq_restart = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md"
+URL_faq_search  = "https://github.com/feralhosting/faqs-cached/search?q="
 URL_faq_ssh     = "https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md"
 
 # Other URLS
+URL_feralaliases = "https://git.io/vsuVp"
 URL_irc_help    = "http://rurounijones.github.io/blog/2009/03/17/how-to-ask-for-help-on-irc/"
 URL_OpenVPN     = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md"
 URL_passwords   = "https://github.com/ashmandias/FeralInfo#password-questions"
@@ -128,18 +154,22 @@ class FeralTools(callbacks.Plugin):
         Usage: urls [user] Pm (optionally to a different user) with help info
         """
         nicks = irc.state.channels[feral_channel].users
-        #channel_state = irc.state.channels[feral_channel]
-        #nicks = list(channel_state.users)
-        reply = [ "Helpful commands: ask [$user] (just ask), autodl [$user] (use any watchdir), cloudmonitor $host (widespread ping), eta [$user] (eta policy), faq [$user] (faq location), "
-                , "                  help $user (send this help), helpus $user (tell them how to get help), payments [$user] (payment status and info),"
-                , "                  quota [$user] (how to check quota), reroute (how to reroute), status $host [details] (checks status), "
-                , "                  urls [$user] (lists client urls), vpn [$user] (how to set up OpenVPN)"
-                , "Tracker commands: (check the status of services at various trackers) btn, pth, ptp"
-                , "Joke    commands: cthulhu, kitten, kittens, vampire, westworld" ]
+
+        helpCommands =  [["ask [$user]","just ask"],["autodl [$user]","use any watchdir"],["cloudmonitor $host","widespread ping"],["eta [$user]","eta policy"],["faq [$user]","faq location"]]
+        helpCommands += [["feralaliases [$user]"," how to install"],["feraliostat [$user]","how to use"],["help $user","send this help"],["helpus $user","tell them how to get help"]]
+        helpCommands += [["payments [$user]","payment status and info"],["quota [$user]","how to check quota"],["reroute [$user]","how to reroute"],["status $host [details]","checks status"]]
+        helpCommands += [["urls [$user]","lists client urls"],["vpn [$user]","how to set up OpenVPN"]]
+
+        trackerCommands = ["btn","pth","ptp","ggn"]
+        jokeCommands = ["cthulhu","kitten","kittens","vampire","westworld"]
+
         try:
             nick = args[0]
             if (ircutils.isNick(nick) and  nick in nicks) or nick == '##feral-chat':
                 self.reply(irc, args, reply="I am sending you help information in a private message. Please review it. You can test the command via PM if you like.")
+                reply  = wrapHelp(ircutils.mircColor("Helpful commands: ", "red"), helpCommands)
+                reply += wrapHelp(ircutils.mircColor("Tracker commands: ", "red"), trackerCommands)
+                reply += wrapHelp(ircutils.mircColor("Joke commands: "   , "red"), jokeCommands)
                 for message in reply:
                     irc.queueMsg(ircmsgs.notice(nick,message))
             else: 
@@ -152,8 +182,7 @@ class FeralTools(callbacks.Plugin):
         Usage: urls [user] Pm (optionally to a different user) with help info
         """
         nicks = irc.state.channels[feral_channel].users
-        #channel_state = irc.state.channels[feral_channel]
-        #nicks = list(channel_state.users)
+        
         reply = ["Help us help you. Please include a description of any problem you are having, along with any relevant information -- "
                 , "such as what you are doing, trying to do, or what guide you are following, and any errors you are getting."
                 , "Additionally, most issues are isolated to one server (or even one account), so please tell us what service and server you are on" 
@@ -223,6 +252,30 @@ class FeralTools(callbacks.Plugin):
         Usage: faq [user] reply (optionally to a different user) with the FAQ location
         """
         reply = "You can find the Feral FAQ at " + URL_faq
+        self.reply(irc, args, reply)
+
+    def faqsearch(self, irc, msg, args):
+        """
+        Usage: search
+        """
+        if len(args) >=1:
+            reply = "click the following link to search the Feral FAQ: " + URL_faq_search + urllib.quote_plus(args[0])
+        else:
+            reply = "Please provide a term to search for."
+        irc.reply(reply, prefixNick=False)
+
+    def feralaliases (self, irc, msg, args):
+        """
+        How to install FeralAliases
+        """
+        reply = "To install some commands to help us help you, please run the following in SSH (NOTE: it is -q as in quiet O as in Output) : wget -qO ~/.feral_aliases " + URL_feralaliases + " && . ~/.feral_aliases"
+        self.reply(irc, args, reply)
+
+    def feraliostat (self, irc, msg, args):
+        """
+        How to install FeralAliases
+        """
+        reply = "To run the feral_iostat command please install the feral_aliases script and run feral_iostat"
         self.reply(irc, args, reply)
 
     def ip(self,irc,msg,args):
@@ -388,18 +441,26 @@ class FeralTools(callbacks.Plugin):
         reply = "Nothing can possibly go wrong... go wrong... go wrong... go wrong..."
         self.reply(irc, args, reply)
 
+
     def test(self, irc, msg, args):
         """
         Usage: 
         """
-#        if shouldReply(irc,msg):
-#            irc.reply("I should reply")
-        reply = "You might find this link helpful in avoiding feeding (or being) a help vampire: http://google.com http://fark.com https://reallylongurlforshitssake.com"
-        matches=re.findall("(?P<url>https?://[^\s]+)", reply)
-        for match in matches:
-            reply = reply.replace(match,shortenURL(match))
-        #url=re.search("(?P<url>https?://[^\s]+)", reply).group("url")
-        irc.reply(reply)
+        helpCommands =  [["ask [$user]","just ask"],["autodl [$user]","use any watchdir"],["cloudmonitor $host","widespread ping"],["eta [$user]","eta policy"],["faq [$user]","faq location"]]
+        helpCommands += [["feralaliases [$user]"," how to install"],["feraliostat [$user]","how to use"],["help $user","send this help"],["helpus $user","tell them how to get help"]]
+        helpCommands += [["payments [$user]","payment status and info"],["quota [$user]","how to check quota"],["reroute [$user]","how to reroute"],["status $host [details]","checks status"]]
+        helpCommands += [["urls [$user]","lists client urls"],["vpn [$user]","how to set up OpenVPN"]]
+        helpCommands += [["aaaaaaa","bbbbbb"]]
+
+        trackerCommands = ["btn","pth","ptp","ggn"]
+        jokeCommands = ["cthulhu","kitten","kittens","vampire","westworld"]
+
+        reply  = wrapHelp(ircutils.mircColor("Helpful commands: ", "red"), helpCommands)
+        reply += wrapHelp(ircutils.mircColor("Tracker commands: ", "red"), trackerCommands)
+        reply += wrapHelp(ircutils.mircColor("Joke commands: "   , "red"), jokeCommands)
+
+        for line in reply:
+            irc.reply(line)
         
         
 
