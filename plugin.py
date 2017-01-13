@@ -120,10 +120,11 @@ volunteers      = "liriel, ozymandias, bobbyblack, and many others"
 helpCommands =  [["ask [$user]","just ask"],["autodl [$user]","use any watchdir"],["cloudmonitor $host","widespread ping"],["eta [$user]","eta policy"],["faq [$user]","faq location"]]
 helpCommands += [["feralaliases [$user]"," how to install"],["feraliostat [$user]","how to use"],["help $user","send this help"],["helpus $user","tell them how to get help"]]
 helpCommands += [["payments [$user]","payment status and info"],["quota [$user]","how to check quota"],["reroute [$user]","how to reroute"],["status $host [details]","checks status"]]
-helpCommands += [["urls [$user]","lists client urls"],["vpn [$user]","how to set up OpenVPN"],["volunteers [$user]","talk about volunteers"],["plexupdate [$user]","host to update plex"],["geoip [$user]","describe geoip system"]]
+helpCommands += [["urls [$user]","lists client urls"],["vpn [$user]","how to set up OpenVPN"],["volunteers [$user]","talk about volunteers"],["plexupdate [$user]","host to update plex"],["geoip [$user]","describe geoip system"],["invites [$user]", feral_channel + " invite policy"]]
+helpCommands += [["t [$user]","displays the topic of " + feral_channel],["staff|notstaff [$user]","how to get staff"],["ipt [$user]","IPT infographic"]]
 
-trackerCommands = ["btn","pth","ptp","ggn"]
-jokeCommands = ["cthulhu","kitten","kittens","vampire","westworld","oneofus","comcast"]
+trackerCommands = ["btn","pth","ptp","ggn","ipt"]
+jokeCommands = ["cthulhu","kitten","kittens","vampire|garlic","westworld","oneofus","comcast","mindreader","wave"]
 
 try:
     from supybot.i18n import PluginInternationalization
@@ -172,7 +173,7 @@ class FeralTools(callbacks.Plugin):
             nick = msg.nick
 
         if (ircutils.isNick(nick) and  nick in nicks) or nick == '##feral-chat' or nick == '#testytest':
-            self.reply(irc, args, reply="I am sending you help information in a private message. Please review it. You can test the commands via PM if you like.")
+            self.reply(irc, args, reply="I am sending you help information in a message only you can see. Please review it (you may need to look in other IRC windows, depending on client). You can test the commands via PM if you like.")
             reply  = wrapHelp(ircutils.mircColor("Helpful commands: ", "red"), helpCommands)
             reply += wrapHelp(ircutils.mircColor("Tracker commands (check status of trackers): ", "red"), trackerCommands)
             reply += wrapHelp(ircutils.mircColor("Joke commands: "   , "red"), jokeCommands)
@@ -282,11 +283,33 @@ class FeralTools(callbacks.Plugin):
         reply = "To run the feral_iostat command please install the feral_aliases script and run feral_iostat"
         self.reply(irc, args, reply)
 
+    def garlic (self, irc, msg, args):
+        """
+        How to install FeralAliases
+        """
+        self.vampire(irc, msg, args)        
+
     def geoip (self, irc, msg, args):
         """
         How to install FeralAliases
         """
         reply = "GeoIP data is the GeoIP companies best guess as to where an IP is physically located. They often use the official address of a company and not the location of the servers. See also: goo.gl/2P2EG4"
+        self.reply(irc, args, reply)
+
+    def ipt (self, irc, msg, args):
+        """
+        ipt info
+        """
+        reply = "For information about IPT, please check here: http://i.imgur.com/b4cCrsJ.png"
+        self.reply(irc, args, reply)
+
+    def notstaff (self, irc, msg, args):
+        self.staff(irc, msg, args)
+
+    def invites (self, irc, msg, args):
+        """
+        """
+        reply = "Feralhosting's owner has requested that we do not ask for, or offer invites to any tracker here. You can discuss how to get them, or if they are worth getting, however"
         self.reply(irc, args, reply)
 
     def ip(self,irc,msg,args):
@@ -415,6 +438,20 @@ class FeralTools(callbacks.Plugin):
         reply = "The SSH FAQ can be found at " + URL_faq_ssh
         self.reply(irc, args, reply)
 
+    def staff(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "If you actually need staff, you should send an email to the support address -- but you will likely be suprised what the customers chatting in IRC can help with."
+        self.reply(irc, args, reply)
+
+    def t(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "The topic of " + feral_channel + " is: " + irc.state.channels[feral_channel].topic
+        self.reply(irc, args, reply)
+
     def urls(self, irc, msg, args):
         """
         Usage: urls [user] reply (optionally to a different user) with URL locations
@@ -452,6 +489,13 @@ class FeralTools(callbacks.Plugin):
         reply = "COOOOOMCAAAAAST! http://tinyurl.com/jwttsmj"
         self.reply(irc, args, reply)
 
+    def gelliss(self, irc, msg, args):
+        """
+        Usage:
+        """
+        reply = "That's the way she goes. Sometimes she goes and sometimes she doesnt cuz that's the f'n way she goes"
+        self.reply(irc, args, reply)
+
     def kitten(self, irc, msg, args):
         """
         Usage:
@@ -464,6 +508,13 @@ class FeralTools(callbacks.Plugin):
         Usage:
         """
         reply = "KITTENS FOR EVERYONE! " + URL_kittens
+        self.reply(irc, args, reply)
+
+    def mindreader(self, irc, msg, args):
+        """
+        Usage:
+        """
+        reply = "As far as we are aware, no one here is a mind reader, so it is really hard for us to answer that question. Could you please provide more details, so we may more easily help you?"
         self.reply(irc, args, reply)
 
     def westworld(self, irc, msg, args):
@@ -480,28 +531,20 @@ class FeralTools(callbacks.Plugin):
         reply = "One of us! One of us! Gooble Gobble! One of us!"
         self.reply(irc, args, reply)
 
+    def wave(self, irc, msg, args):
+        """
+        Usage:
+        """
+        reply = "o/ "
+        irc.reply(reply + msg.nick)
+
 
     def test(self, irc, msg, args):
         """
         Usage: 
         """
-#        helpCommands =  [["ask [$user]","just ask"],["autodl [$user]","use any watchdir"],["cloudmonitor $host","widespread ping"],["eta [$user]","eta policy"],["faq [$user]","faq location"]]
-#        helpCommands += [["feralaliases [$user]"," how to install"],["feraliostat [$user]","how to use"],["help $user","send this help"],["helpus $user","tell them how to get help"]]
-#        helpCommands += [["payments [$user]","payment status and info"],["quota [$user]","how to check quota"],["reroute [$user]","how to reroute"],["status $host [details]","checks status"]]
-#        helpCommands += [["urls [$user]","lists client urls"],["vpn [$user]","how to set up OpenVPN"]]
-#        helpCommands += [["aaaaaaa","bbbbbb"]]
-##
-#        trackerCommands = ["btn","pth","ptp","ggn"]
-#        jokeCommands = ["cthulhu","kitten","kittens","vampire","westworld"]
-#
-##        reply  = wrapHelp(ircutils.mircColor("Helpful commands: ", "red"), helpCommands)
-#        reply += wrapHelp(ircutils.mircColor("Tracker commands: ", "red"), trackerCommands)
-#        reply += wrapHelp(ircutils.mircColor("Joke commands: "   , "red"), jokeCommands)
 
-#        for line in reply:
-#            irc.reply(line)
-
-        irc.reply(msg.nick)        
+        irc.reply(irc.state.channels[feral_channel].topic)        
         
 
 Class = FeralTools

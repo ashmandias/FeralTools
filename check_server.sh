@@ -41,15 +41,15 @@ colorize(){
 	SERVICE="${1}"
 	STATUS="${2}"
 	if [[ "${STATUS}" == "Up" ]]; then
-		echo "${COLOR_GOOD}${SERVICE}: ${STATUS}${COLOR_END}"
+		echo "${SERVICE}:${COLOR_GOOD} ${STATUS}${COLOR_END}"
 	elif [[ "${STATUS}" =~ 0%.* ]]; then
-		echo "${COLOR_GOOD}${SERVICE}: ${STATUS}${COLOR_END}"
+		echo "${SERVICE}:${COLOR_GOOD} ${STATUS}${COLOR_END}"
 	elif [[ "${STATUS}" == "Down" ]]; then
-		echo "${COLOR_BAD}${SERVICE}: ${STATUS}${COLOR_END}"
+		echo "${SERVICE}:${COLOR_BAD} ${STATUS}${COLOR_END}"
 	elif [[ "${STATUS}" =~ 100%.* ]]; then
-		echo "${COLOR_BAD}${SERVICE}: ${STATUS}${COLOR_END}"
+		echo "${SERVICE}:${COLOR_BAD} ${STATUS}${COLOR_END}"
 	else
-		echo "${COLOR_WARN}${SERVICE}: ${STATUS}${COLOR_END}"
+		echo "${SERVICE}:${COLOR_WARN} ${STATUS}${COLOR_END}"
 	fi
 }
 
@@ -101,7 +101,9 @@ PING_PERCENT="${BASH_REMATCH}"
 PING_STATUS="$(format_service_string "Ping" "${BASH_REMATCH} loss" "(Based on ${PING_COUNT} Pings)")"
 
 if [[ "${DETAILS}" == "true" ]]; then
-	REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} | If not all services are ${COLOR_GOOD}Up${COLOR_END}, troubleshooting issues is a ${COLOR_BAD}bad${COLOR_END} idea | Checks preformed from a ${COLOR_GOOD}non-Feral${COLOR_END} host located in ${COLOR_BAD}Canada${COLOR_END}."
+	#REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} | If not all services are ${COLOR_GOOD}Up${COLOR_END}, troubleshooting issues is a ${COLOR_BAD}bad${COLOR_END} idea | Checks performed from a ${COLOR_GOOD}non-Feral${COLOR_END} host located in ${COLOR_BAD}Canada${COLOR_END}."
+	REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} | If not all services are ${COLOR_GOOD}Up${COLOR_END}, troubleshooting issues is a ${COLOR_BAD}bad${COLOR_END} idea "
+#| Checks performed from a ${COLOR_GOOD}non-Feral${COLOR_END} host located in ${COLOR_BAD}Canada${COLOR_END}."
 else
 	REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} |"
 fi
