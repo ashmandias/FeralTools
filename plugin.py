@@ -40,6 +40,7 @@ import threading
 import os
 import tinyurl
 import dns
+from dns import *
 import re
 import urllib
 
@@ -536,7 +537,7 @@ class FeralTools(callbacks.Plugin):
         Usage:
         """
         reply = "o/ "
-        irc.reply(reply + msg.nick)
+        irc.reply(reply + msg.nick,prefixNick=False)
 
 
     def test(self, irc, msg, args):
