@@ -94,7 +94,7 @@ HTTP_STATUS="$(format_service_string "HTTP" "${HTTP_RETURN}" "(Server-wide, not 
 
 PING="$(timeout "${TIMEOUT}" ping -A -q -c "${PING_COUNT}" "${HOST}" | grep transmitted)"
 if [[ "${PING}x" == "x" ]]; then
-	PING="100"
+	PING="100%"
 fi
 [[ "${PING}" =~ [0-9]+% ]]
 PING_PERCENT="${BASH_REMATCH}"
