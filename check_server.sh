@@ -42,7 +42,7 @@ colorize(){
 	STATUS="${2}"
 	if [[ "${STATUS}" == "Up" ]]; then
 		echo "${SERVICE}:${COLOR_GOOD} ${STATUS}${COLOR_END}"
-	elif [[ "${STATUS}" =~ 0%.* ]]; then
+	elif [[ "${STATUS}" =~ ^0%.* ]]; then
 		echo "${SERVICE}:${COLOR_GOOD} ${STATUS}${COLOR_END}"
 	elif [[ "${STATUS}" == "Down" ]]; then
 		echo "${SERVICE}:${COLOR_BAD} ${STATUS}${COLOR_END}"
