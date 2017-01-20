@@ -352,6 +352,10 @@ class FeralTools(callbacks.Plugin):
         else:
             irc.reply("Please use the command \"status HOST\"")
             return
+        if not self.validHost(host)[0]:
+            irc.reply( msg.nick + ":" + host + " does not appear to be a valid feral hostname")
+            return
+    
         if len(args) >=2:
             details='true'
         else:
