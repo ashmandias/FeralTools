@@ -51,7 +51,10 @@ hadalyNick = "Hadaly"
 
 def shortenURL(url):
     if len(url) > max_url_length:
-        return tinyurl.create_one(url)
+        try:
+            return tinyurl.create_one(url)
+        except:
+            return url
     else:
         return url
 
