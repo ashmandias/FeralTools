@@ -48,6 +48,7 @@ feral_channel = "##feral"
 max_url_length = 15
 feralbotNick = "FeralBot"
 hadalyNick = "Hadaly"
+benbotNick = "BenBot"
 
 def shortenURL(url):
     if len(url) > max_url_length:
@@ -70,6 +71,8 @@ def shouldReply(irc,msg):
     if botCommand.startswith('*'):
         return True
     elif botCommand.startswith('!') and feralbotNick not in nicks:
+        return True
+    elif botCommand.startswith('$') and benbotNick not in nicks:
         return True
     elif botCommand.startswith('!') and hadalyNick not in nicks:
         return True
@@ -103,12 +106,15 @@ URL_faq_reroute = "https://github.com/feralhosting/faqs-cached/blob/master/06%20
 URL_faq_restart = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md"
 URL_faq_search  = "https://github.com/feralhosting/faqs-cached/search?q="
 URL_faq_ssh     = "https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md"
+URL_faq_www     = "https://github.com/feralhosting/faqs-cached/blob/master/05%20HTTP/01%20Putting%20your%20WWW%20folder%20to%20use.md"
+URL_faq_nginx   = "https://github.com/feralhosting/faqs-cached/blob/master/05%20HTTP/10%20Updating%20Apache%20to%20nginx.md"
 
 # Other URLS
 URL_feralaliases = "https://git.io/vsuVp"
 URL_irc_help    = "http://rurounijones.github.io/blog/2009/03/17/how-to-ask-for-help-on-irc/"
 URL_OpenVPN     = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md"
 URL_passwords   = "https://github.com/ashmandias/FeralInfo#password-questions"
+URL_passwords2  = "https://www.feralhosting.com/login/recover/guide"
 URL_payments    = "https://github.com/ashmandias/FeralInfo#payments"
 URL_pricing     = "http://web.archive.org/web/20160220120121/https://www.feralhosting.com/pricing"
 URL_quota       = "https://github.com/feralhosting/feralfilehosting/tree/master/Feral%20Wiki/SSH/Check%20your%20disk%20quota%20in%20SSH"
@@ -126,6 +132,7 @@ helpCommands += [["feralaliases [$user]"," how to install"],["feraliostat [$user
 helpCommands += [["payments [$user]","payment status and info"],["quota [$user]","how to check quota"],["reroute [$user]","how to reroute"],["status $host [details]","checks status"]]
 helpCommands += [["urls [$user]","lists client urls"],["vpn [$user]","how to set up OpenVPN"],["volunteers [$user]","talk about volunteers"],["plexupdate [$user]","host to update plex"],["geoip [$user]","describe geoip system"],["invites [$user]", feral_channel + " invite policy"]]
 helpCommands += [["t [$user]","displays the topic of " + feral_channel],["staff|notstaff [$user]","how to get staff"],["ipt [$user]","IPT infographic"]]
+helpCommands += [["www [$user]","link to faq on using the www dir"],["nginx","Install nginx"],["upgrade","How to change plans"]]
 
 trackerCommands = ["btn","pth","ptp","ggn","ipt"]
 jokeCommands = ["cthulhu","kitten","kittens","vampire|garlic","westworld","oneofus","comcast","mindreader","wave"]
@@ -242,12 +249,33 @@ class FeralTools(callbacks.Plugin):
         """
         response=self.validHost(host)
         if response[0]:
-            reply = "To view a worldwide ping to " + ircutils.mircColor(host.capitalize(), "green") + ", please visit the following link:http://cloudmonitor.ca.com/en/ping.php?vtt=1387589430&varghost=" + host + ".feralhosting.com&vhost=_&vaction=ping&ping=start"
+            reply = "To view a worldwide ping to " + ircutils.mircColor(host.capitalize(), "green") + ", please visit the following link: http://cloudmonitor.ca.com/en/ping.php?vtt=1387589430&varghost=" + host + ".feralhosting.com&vhost=_&vaction=ping&ping=start"
         else:
             reply = "The host: " + ircutils.mircColor(host.capitalize(), "red") + " does not appear to be a valid Feral host."
         self.reply(irc, args, reply)
             
     cloudmonitor = wrap(cloudmonitor,['anything'])
+
+    def dafuq(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = ircutils.mircColor("NOPE!","red")
+        self.reply(irc, args, reply)
+
+    def declined(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "If your payment was declined, please check that all the information you entered was accurate and correct, that you are not using a VPN or a proxy. Those are the typical reasons Stripe may decline a payment. Otherwise, ask your bank for details."
+        self.reply(irc, args, reply)
+
+    def disabled(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "Disabled slots will be automatically enabled soon.  No one in IRC can enable it for you. No ticket is needed at this time. Once it is reenabled, please give it 10-15 minutes to restart all services."
+        self.reply(irc, args, reply)
 
     def eta(self, irc, msg, args):
         """
@@ -300,11 +328,24 @@ class FeralTools(callbacks.Plugin):
         reply = "GeoIP data is the GeoIP companies best guess as to where an IP is physically located. They often use the official address of a company and not the location of the servers. See also: goo.gl/2P2EG4"
         self.reply(irc, args, reply)
 
+    def issues (self, irc, msg, args):
+        """
+        """
+        reply = "Current issues: unclaimed slots are disabled (say *unclaimed for details). Disabled slots are automaticall enabled (say *disabled for details)"
+        self.reply(irc, args, reply)
+
     def ipt (self, irc, msg, args):
         """
         ipt info
         """
         reply = "For information about IPT, please check here: http://i.imgur.com/b4cCrsJ.png"
+        self.reply(irc, args, reply)
+
+    def nginx (self, irc, msg, args):
+        """
+        ipt info
+        """
+        reply = "To find out how to install nginx: " + URL_faq_nginx
         self.reply(irc, args, reply)
 
     def notstaff (self, irc, msg, args):
@@ -356,7 +397,7 @@ class FeralTools(callbacks.Plugin):
             irc.reply("Please use the command \"status HOST\"")
             return
         if not self.validHost(host)[0]:
-            irc.reply( msg.nick + ":" + host + " does not appear to be a valid feral hostname")
+            irc.reply( host + " does not appear to be a valid feral hostname")
             return
     
         if len(args) >=2:
@@ -373,7 +414,7 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: 
         """
-        reply = "Please see the following link for password recovery tips: " + URL_passwords
+        reply = "Please see the following link for password recovery tips: " + URL_passwords + " or " + URL_passwords2
         self.reply(irc, args, reply)
 
     def payments(self, irc, msg, args):
@@ -394,7 +435,9 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: 
         """
-        reply = "To upgrade to the latest Feral supported version of plex please run this: kill $(ps x | pgrep -fu $(whoami) 'plexmediaserver') &> /dev/null; rm -rf ~/private/plex && mkdir -p ~/private/plex"
+        reply = "To upgrade to the latest *Feral supported version* (currently 1.3.4.3285, not always the latest Plex version) of plex please run this: kill $(ps x | pgrep -fu $(whoami) 'plexmediaserver') &> /dev/null; rm -rf ~/private/plex && mkdir -p ~/private/plex"
+        self.reply(irc, args, reply)
+        reply = "ALTERNATIVELY you can try downloading the .deb file and running: dpkg-deb -x plexmediaserver_*_amd64.deb ~/private/plex -- this allows you to install arbitrary, untested versions of Plex (including Plex Pass)." 
         self.reply(irc, args, reply)
 
     def pricing(self, irc, msg, args):
@@ -460,6 +503,24 @@ class FeralTools(callbacks.Plugin):
         reply = "The topic of " + feral_channel + " is: " + irc.state.channels[feral_channel].topic
         self.reply(irc, args, reply)
 
+    def unclaimed(self, irc, msg, args):
+        reply = ircutils.mircColor("All","red") + " unclaimed slots have been " + ircutils.mircColor("disabled/suspended","red") + ". They will *not* be deleted immediately. Please claim your slot at https://www.feralhosting.com/login/ now! Please see http://tinyurl.com/zvsxc5t or http://tinyurl.com/zxjdszf for password recovery tips!"
+        self.reply(irc, args, reply)
+        reply = "Tips: 1. If you are clicking the " + ircutils.mircColor("'reset'", "red" ) + " button, you are likely making a " + ircutils.mircColor("huge", "red") + " mistake. 2. Use the same browser for the whole process. 3. At this point in time " + ircutils.mircColor("*full payment of your balance is not required*", "red") + ". Please pay as soon as you can, but your slot will " + ircutils.mircColor("*not*", "red") +" be disabled for non-payment.... yet."
+        self.reply(irc, args, reply)
+        reply = "Tips (cont.) 4. If you cannot recall what the existing day-of-month your payment is due, please select a date that is convienient for you."
+        self.reply(irc, args, reply)
+
+    def reclaim(self, irc, msg, args):
+        self.unclaimed(irc, msg, args);
+
+    def upgrade(self, irc, msg, args):
+        """
+        Usage:
+        """
+        reply = "You can upgrade (or downgrade, or switch servers) your slot by purchasing a new slot, transfering the data (or having staff do it for you) and then getting a refund on the old slot. There is no way to do an in-place upgrade."
+        self.reply(irc, args, reply)
+
     def urls(self, irc, msg, args):
         """
         Usage: urls [user] reply (optionally to a different user) with URL locations
@@ -479,6 +540,13 @@ class FeralTools(callbacks.Plugin):
         Usage:
         """
         reply = volunteers + " are all just volunteers. They are not staff, they are customers that enjoy helping other users in their spare time."
+        self.reply(irc, args, reply)
+
+    def www(self, irc, msg, args):
+        """
+        Usage:
+        """
+        reply = "Putting your WWW folder to use: " + URL_faq_www
         self.reply(irc, args, reply)
 
 # jokes

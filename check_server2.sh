@@ -27,8 +27,7 @@ fi
 
 #SLEEP="2"
 PING_COUNT="10"
-TIMEOUT="10s"
-INTERVAL=".2"
+TIMEOUT="5s"
 
 FTP_SERVER="ProFTPD"
 SSH_SERVER="OpenSSH"
@@ -93,7 +92,7 @@ else
 fi
 HTTP_STATUS="$(format_service_string "HTTP" "${HTTP_RETURN}" "(Server-wide, not per-user)")"
 
-PING="$(timeout "${TIMEOUT}" ping -A -q -c "${PING_COUNT}" -i "${INTERVAL}" "${HOST}" | grep transmitted)"
+PING="$(timeout "${TIMEOUT}" ping -A -q -c "${PING_COUNT}" "${HOST}" | grep transmitted)"
 if [[ "${PING}x" == "x" ]]; then
 	PING="100%"
 fi
@@ -106,7 +105,7 @@ if [[ "${DETAILS}" == "true" ]]; then
 	REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} | If not all services are ${COLOR_GOOD}Up${COLOR_END}, troubleshooting issues is a ${COLOR_BAD}bad${COLOR_END} idea "
 #| Checks performed from a ${COLOR_GOOD}non-Feral${COLOR_END} host located in ${COLOR_BAD}Canada${COLOR_END}."
 else
-	REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS}"
+	REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} |"
 fi
 
 echo "$(date): ${REPLY}" >> ${HOME}/out/status-$(date -I).log
