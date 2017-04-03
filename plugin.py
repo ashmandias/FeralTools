@@ -102,6 +102,7 @@ def wrapHelp(prefix,toWrap):
 URL_faq         = "https://github.com/feralhosting/faqs-cached"
 URL_faq_autodl  = "https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/04%20Autodl-irssi%20-%20Installation%20and%20Configuration.md"
 URL_faq_plex    = "https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/27%20Plex.md"
+URL_faq_plugins = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/16%20ruTorrent%20-%20Plugins.md"
 URL_faq_reroute = "https://github.com/feralhosting/faqs-cached/blob/master/06%20Other%20software/04%20Automated%20Reroute.md"
 URL_faq_restart = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md"
 URL_faq_search  = "https://github.com/feralhosting/faqs-cached/search?q="
@@ -276,6 +277,9 @@ class FeralTools(callbacks.Plugin):
         """
         reply = "Disabled slots will be automatically enabled soon.  No one in IRC can enable it for you. No ticket is needed at this time. Once it is reenabled, please give it 10-15 minutes to restart all services."
         self.reply(irc, args, reply)
+    
+    def diskio(self, irc, msg, args):
+        self.feraliostat(irc, msg, args);
 
     def eta(self, irc, msg, args):
         """
@@ -312,7 +316,7 @@ class FeralTools(callbacks.Plugin):
         """
         How to install FeralAliases
         """
-        reply = "To run the feral_iostat command please install the feral_aliases script and run feral_iostat"
+        reply = "To run the feral_iostat command please install the feral_aliases script (say \"*feral_aliases\" to learn how) and run feral_iostat"
         self.reply(irc, args, reply)
 
     def garlic (self, irc, msg, args):
@@ -429,6 +433,13 @@ class FeralTools(callbacks.Plugin):
         Usage: 
         """
         reply = "Plex is now available. Please see: " + URL_faq_plex + " for details"
+        self.reply(irc, args, reply)
+
+    def plugins(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "To install plugins in rutorrent, please see: " + URL_faq_plugins + "."
         self.reply(irc, args, reply)
 
     def plexupdate(self, irc, msg, args):
