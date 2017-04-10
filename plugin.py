@@ -300,7 +300,7 @@ class FeralTools(callbacks.Plugin):
         Usage: search
         """
         if len(args) >=1:
-            reply = "click the following link to search the Feral FAQ: " + URL_faq_search + urllib.quote_plus(args[0])
+            reply = "Feral FAQ search result: " + URL_faq_search + urllib.quote_plus(args[0])
         else:
             reply = "Please provide a term to search for."
         irc.reply(reply, prefixNick=False)
@@ -398,7 +398,7 @@ class FeralTools(callbacks.Plugin):
         if len(args) >=1:
             host=args[0]
         else:
-            irc.reply("Please use the command \"status HOST\"")
+            irc.reply("Please use the command \"*status HOST\"")
             return
         if not self.validHost(host)[0]:
             irc.reply( host + " does not appear to be a valid feral hostname")
@@ -439,7 +439,7 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: 
         """
-        reply = "To install plugins in rutorrent, please see: " + URL_faq_plugins + "."
+        reply = "To install plugins in rutorrent, please see: " + URL_faq_plugins + " ."
         self.reply(irc, args, reply)
 
     def plexupdate(self, irc, msg, args):
@@ -448,7 +448,7 @@ class FeralTools(callbacks.Plugin):
         """
         reply = "To upgrade to the latest *Feral supported version* (currently 1.3.4.3285, not always the latest Plex version) of plex please run this: kill $(ps x | pgrep -fu $(whoami) 'plexmediaserver') &> /dev/null; rm -rf ~/private/plex && mkdir -p ~/private/plex"
         self.reply(irc, args, reply)
-        reply = "ALTERNATIVELY you can try downloading the .deb file and running: dpkg-deb -x plexmediaserver_*_amd64.deb ~/private/plex -- this allows you to install arbitrary, untested versions of Plex (including Plex Pass)." 
+        reply = "ALTERNATIVELY you can try downloading the .deb file and running: dpkg-deb -x plexmediaserver_*_amd64.deb ~/private/plex ; kill $(ps x | pgrep -fu $(whoami) 'plexmediaserver') -- this allows you to install arbitrary, untested versions of Plex (including Plex Pass)." 
         self.reply(irc, args, reply)
 
     def pricing(self, irc, msg, args):
