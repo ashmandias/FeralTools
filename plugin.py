@@ -355,6 +355,9 @@ class FeralTools(callbacks.Plugin):
     def notstaff (self, irc, msg, args):
         self.staff(irc, msg, args)
 
+    def openvpn(self, irc, msg, args):
+        self.vpn(irc,msg,args);
+
     def invites (self, irc, msg, args):
         """
         """
@@ -391,6 +394,9 @@ class FeralTools(callbacks.Plugin):
         irc.reply(check_output([os.environ['HOME'] + "/checks/check_server.sh", host, details]), prefixNick=False)
 
     #def status(self, irc, msg, args, host):
+    def searchfaq(self, irc, msg, args):
+        self.faqsearch(irc, msg, args);
+
     def status(self, irc, msg, args):
         """
         Usage: status HOST [details] - this will send 3 pings, and then check for FTP and SSH connectivity.
