@@ -49,6 +49,7 @@ max_url_length = 15
 feralbotNick = "FeralBot"
 hadalyNick = "Hadaly"
 benbotNick = "BenBot"
+Base_github = "ashmandias"
 
 def shortenURL(url):
     if len(url) > max_url_length:
@@ -99,26 +100,28 @@ def wrapHelp(prefix,toWrap):
     return reply
 
 # FAQ URLs
-URL_faq         = "https://github.com/feralhosting/faqs-cached"
-URL_faq_autodl  = "https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/04%20Autodl-irssi%20-%20Installation%20and%20Configuration.md"
-URL_faq_plex    = "https://github.com/feralhosting/faqs-cached/blob/master/08%20Software/27%20Plex.md"
-URL_faq_plugins = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/16%20ruTorrent%20-%20Plugins.md"
-URL_faq_reroute = "https://github.com/feralhosting/faqs-cached/blob/master/06%20Other%20software/04%20Automated%20Reroute.md"
-URL_faq_restart = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md"
-URL_faq_search  = "https://github.com/feralhosting/faqs-cached/search?q="
-URL_faq_ssh     = "https://github.com/feralhosting/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md"
-URL_faq_www     = "https://github.com/feralhosting/faqs-cached/blob/master/05%20HTTP/01%20Putting%20your%20WWW%20folder%20to%20use.md"
-URL_faq_nginx   = "https://github.com/feralhosting/faqs-cached/blob/master/05%20HTTP/10%20Updating%20Apache%20to%20nginx.md"
+URL_faq         = "https://github.com/" + Base_github + "/faqs-cached"
+URL_faq_autodl  = "https://github.com/" + Base_github + "/faqs-cached/blob/master/08%20Software/04%20Autodl-irssi%20-%20Installation%20and%20Configuration.md"
+URL_faq_plex    = "https://github.com/" + Base_github + "/faqs-cached/blob/master/08%20Software/27%20Plex.md"
+URL_faq_plugins = "https://github.com/" + Base_github + "/faqs-cached/blob/master/02%20Installable%20software/16%20ruTorrent%20-%20Plugins.md"
+URL_faq_rclone  = "https://github.com/" + Base_github + "/faqs-cached/blob/master/08%20Software/21%20rclone%20-%20Cloud%20Service%20Syncing.md"
+URL_faq_reroute = "https://github.com/" + Base_github + "/faqs-cached/blob/master/06%20Other%20software/04%20Automated%20Reroute.md"
+URL_faq_restart = "https://github.com/" + Base_github + "/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md"
+URL_faq_search  = "https://github.com/" + Base_github + "/faqs-cached/search?q="
+URL_faq_ssh     = "https://github.com/" + Base_github + "/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md"
+URL_faq_www     = "https://github.com/" + Base_github + "/faqs-cached/blob/master/05%20HTTP/01%20Putting%20your%20WWW%20folder%20to%20use.md"
+URL_faq_nginx   = "https://github.com/" + Base_github + "/faqs-cached/blob/master/05%20HTTP/10%20Updating%20Apache%20to%20nginx.md"
+
+URL_OpenVPN     = "https://github.com/" + Base_github + "/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md"
+URL_quota       = "https://github.com/" + Base_github + "/feralfilehosting/tree/master/Feral%20Wiki/SSH/Check%20your%20disk%20quota%20in%20SSH"
 
 # Other URLS
 URL_feralaliases = "https://git.io/vsuVp"
 URL_irc_help    = "http://rurounijones.github.io/blog/2009/03/17/how-to-ask-for-help-on-irc/"
-URL_OpenVPN     = "https://github.com/feralhosting/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md"
 URL_passwords   = "https://github.com/ashmandias/FeralInfo#password-questions"
 URL_passwords2  = "https://www.feralhosting.com/login/recover/guide"
 URL_payments    = "https://github.com/ashmandias/FeralInfo#payments"
 URL_pricing     = "http://web.archive.org/web/20160220120121/https://www.feralhosting.com/pricing"
-URL_quota       = "https://github.com/feralhosting/feralfilehosting/tree/master/Feral%20Wiki/SSH/Check%20your%20disk%20quota%20in%20SSH"
 URL_urls        = "https://github.com/ashmandias/FeralInfo#application-access"
 URL_reroute     = "https://network.feral.io/reroute"
 URL_vampire     = "http://www.skidmore.edu/~pdwyer/e/eoc/help_vampire.htm"
@@ -476,6 +479,13 @@ class FeralTools(callbacks.Plugin):
         Usage: vpn [user] reply (optionally to a different user) with OpenVPN install instructions
         """
         reply = "You can find the documentation for installing and configuring OpenVPN at " + URL_OpenVPN
+        self.reply(irc, args, reply)
+
+    def rclone(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "You can install rclone on feral with the following documentation -- but you cannot use FUSE" + URL_faq_rclone
         self.reply(irc, args, reply)
 
     def reroute(self, irc, msg, args):
