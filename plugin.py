@@ -49,7 +49,8 @@ max_url_length = 15
 feralbotNick = "FeralBot"
 hadalyNick = "Hadaly"
 benbotNick = "BenBot"
-Base_github = "ashmandias"
+Base_github = "feralhosting"
+Repo_name = "wiki"
 
 def shortenURL(url):
     if len(url) > max_url_length:
@@ -100,19 +101,19 @@ def wrapHelp(prefix,toWrap):
     return reply
 
 # FAQ URLs
-URL_faq         = "https://github.com/" + Base_github + "/faqs-cached"
-URL_faq_autodl  = "https://github.com/" + Base_github + "/faqs-cached/blob/master/08%20Software/04%20Autodl-irssi%20-%20Installation%20and%20Configuration.md"
-URL_faq_plex    = "https://github.com/" + Base_github + "/faqs-cached/blob/master/08%20Software/27%20Plex.md"
-URL_faq_plugins = "https://github.com/" + Base_github + "/faqs-cached/blob/master/02%20Installable%20software/16%20ruTorrent%20-%20Plugins.md"
-URL_faq_rclone  = "https://github.com/" + Base_github + "/faqs-cached/blob/master/08%20Software/21%20rclone%20-%20Cloud%20Service%20Syncing.md"
-URL_faq_reroute = "https://github.com/" + Base_github + "/faqs-cached/blob/master/06%20Other%20software/04%20Automated%20Reroute.md"
-URL_faq_restart = "https://github.com/" + Base_github + "/faqs-cached/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md"
-URL_faq_search  = "https://github.com/" + Base_github + "/faqs-cached/search?q="
-URL_faq_ssh     = "https://github.com/" + Base_github + "/faqs-cached/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md"
-URL_faq_www     = "https://github.com/" + Base_github + "/faqs-cached/blob/master/05%20HTTP/01%20Putting%20your%20WWW%20folder%20to%20use.md"
-URL_faq_nginx   = "https://github.com/" + Base_github + "/faqs-cached/blob/master/05%20HTTP/10%20Updating%20Apache%20to%20nginx.md"
+URL_faq         = "https://github.com/" + Base_github + "/" + Repo_name 
+URL_faq_autodl  = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/08%20Software/04%20Autodl-irssi%20-%20Installation%20and%20Configuration.md"
+URL_faq_plex    = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/08%20Software/27%20Plex.md"
+URL_faq_plugins = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/02%20Installable%20software/16%20ruTorrent%20-%20Plugins.md"
+URL_faq_rclone  = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/08%20Software/21%20rclone%20-%20Cloud%20Service%20Syncing.md"
+URL_faq_reroute = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/06%20Other%20software/04%20Automated%20Reroute.md"
+URL_faq_restart = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/02%20Installable%20software/04%20Restarting%20-%20rtorrent%20-%20Deluge%20-%20Transmission%20-%20MySQL.md"
+URL_faq_search  = "https://github.com/" + Base_github + "/" + Repo_name + "/search?q="
+URL_faq_ssh     = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/03%20SSH/01%20SSH%20Guide%20-%20The%20Basics.md"
+URL_faq_www     = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/05%20HTTP/01%20Putting%20your%20WWW%20folder%20to%20use.md"
+URL_faq_nginx   = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/05%20HTTP/10%20Updating%20Apache%20to%20nginx.md"
 
-URL_OpenVPN     = "https://github.com/" + Base_github + "/faqs-cached/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md"
+URL_OpenVPN     = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md"
 URL_quota       = "https://github.com/" + Base_github + "/feralfilehosting/tree/master/Feral%20Wiki/SSH/Check%20your%20disk%20quota%20in%20SSH"
 
 # Other URLS
@@ -137,6 +138,8 @@ helpCommands += [["payments [$user]","payment status and info"],["quota [$user]"
 helpCommands += [["urls [$user]","lists client urls"],["vpn [$user]","how to set up OpenVPN"],["volunteers [$user]","talk about volunteers"],["plexupdate [$user]","host to update plex"],["geoip [$user]","describe geoip system"],["invites [$user]", feral_channel + " invite policy"]]
 helpCommands += [["t [$user]","displays the topic of " + feral_channel],["staff|notstaff [$user]","how to get staff"],["ipt [$user]","IPT infographic"]]
 helpCommands += [["www [$user]","link to faq on using the www dir"],["nginx","Install nginx"],["upgrade","How to change plans"]]
+helpCommands += [["cache [user]","tell user to clear cache"]]
+helpCommands += [["salt [user]","explain salt+hash"]]
 
 trackerCommands = ["btn","pth","ptp","ggn","ipt"]
 jokeCommands = ["cthulhu","kitten","kittens","vampire|garlic","westworld","oneofus","comcast","mindreader","wave"]
@@ -245,6 +248,12 @@ class FeralTools(callbacks.Plugin):
         helper for \"Make sure autodl-irssi is started and configured properly\" regex
         """
         reply = "If you are getting the error \"" + ircutils.mircColor("Make sure autodl-irssi is started and configured properly","red") + "\", make sure one, and only one instance of irssi is running. If this does not resolve the issue, please run the script at: " + URL_faq_autodl
+        self.reply(irc, args, reply)
+
+    def cache(self, irc, msg, args):
+        """
+        """
+        reply = "If you are getting the message \"" + ircutils.mircColor("If you are a user and are looking for your data or installed applications please visit the software page in the manager.","red") + "\" when trying to access recently installed software, please clear your browser cache and try again."
         self.reply(irc, args, reply)
 
     def cloudmonitor(self, irc, msg, args, host):
@@ -507,6 +516,13 @@ class FeralTools(callbacks.Plugin):
         Usage: 
         """
         reply = "The errors\"" + ircutils.mircColor("torrent list not yet available connection to rtorrent not established", "red") + "\" or \"" + ircutils.mircColor("No connection to rTorrent. Check if it is really running.", "red") + "\" typically means rtorrent is either busy, or not running. Try to restart it with: " + URL_faq_restart
+        self.reply(irc, args, reply)
+
+    def salt(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "The phrase \"" + ircutils.mircColor("stored as a sha512 salt+hash","red") + "\" means the system doesn't know it and you should continue to use the one used to recover your slot. If you've lost that please open a support ticket and ask for a reset"
         self.reply(irc, args, reply)
 
     def ssh(self, irc, msg, args):
