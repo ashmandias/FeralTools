@@ -103,11 +103,15 @@ PING_STATUS="$(format_service_string "Ping" "${BASH_REMATCH} loss" "(Based on ${
 
 if [[ "${DETAILS}" == "true" ]]; then
 	#REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} | If not all services are ${COLOR_GOOD}Up${COLOR_END}, troubleshooting issues is a ${COLOR_BAD}bad${COLOR_END} idea | Checks performed from a ${COLOR_GOOD}non-Feral${COLOR_END} host located in ${COLOR_BAD}Canada${COLOR_END}."
-	REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} | If not all services are ${COLOR_GOOD}Up${COLOR_END}, troubleshooting issues is a ${COLOR_BAD}bad${COLOR_END} idea "
+	REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} | ${PING_STATUS} | If not all services are ${COLOR_GOOD}Up${COLOR_END}, troubleshooting issues is a ${COLOR_BAD}bad${COLOR_END} idea "
 #| Checks performed from a ${COLOR_GOOD}non-Feral${COLOR_END} host located in ${COLOR_BAD}Canada${COLOR_END}."
 else
-	REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS}"
+	REPLY="${HOSTNAME^} status: ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS} | ${PING_STATUS}"
+	#REPLY="${HOSTNAME^} status: ${PING_STATUS} | ${FTP_STATUS} | ${SSH_STATUS} | ${HTTP_STATUS}"
 fi
 
 echo "$(date): ${REPLY}" >> ${HOME}/out/status-$(date -I).log
 echo -ne "${REPLY}"
+if [[ "$FTP_RETURN" == "Down" ]] || [[ "$SSH_RETURN" == "Down" ]] || [[ "$HTTP_RETURN" == "Down" ]]; then
+	echo -ne "| If a server is having issues, staff is already aware"
+fi
