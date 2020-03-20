@@ -43,15 +43,18 @@ import dns
 from dns import *
 import re
 import urllib
+#import time
 
 feral_channel = "##feral"
 max_url_length = 15
 feralbotNick = "FeralBot"
 hadalyNick = "Hadaly"
 benbotNick = "BenBot"
-Base_github = "feralhosting"
+Base_github = "ashmandias"
+#Base_github = "ormanya"
+#Base_github = "feralhosting"
 Repo_name = "wiki"
-FeralPlexVersion = "1.7.5.4035"
+FeralPlexVersion = "1.16.1.1291-158e5b19 as of July 3 2019"
 
 def shortenURL(url):
     if len(url) > max_url_length:
@@ -123,8 +126,10 @@ URL_faq_ssh     = "https://github.com/" + Base_github + "/" + Repo_name + "/blob
 URL_faq_www     = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/05%20HTTP/01%20Putting%20your%20WWW%20folder%20to%20use.md"
 URL_faq_nginx   = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/05%20HTTP/10%20Updating%20Apache%20to%20nginx.md"
 URL_wiki_search = "https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.feralhosting.com%2Fwiki+"
+URL_privacy     = "https://www.feralhosting.com/wiki/privacy-policy"
 
-URL_OpenVPN     = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md"
+#URL_OpenVPN     = "https://github.com/" + Base_github + "/" + Repo_name + "/blob/master/02%20Installable%20software/10%20OpenVPN%20-%20How%20to%20connect%20to%20your%20vpn.md"
+URL_OpenVPN     = "https://www.feralhosting.com/wiki/software/openvpn"
 URL_quota       = "https://github.com/" + Base_github + "/feralfilehosting/tree/master/Feral%20Wiki/SSH/Check%20your%20disk%20quota%20in%20SSH"
 
 # Other URLS
@@ -146,7 +151,8 @@ volunteers      = "liriel, ozymandias, bobbyblack, and many others"
 helpCommands =  [["ask [$user]","just ask"],["autodl [$user]","use any watchdir"],["cloudmonitor $host","widespread ping"],["eta [$user]","eta policy"],["faq [$user]","faq location"]]
 helpCommands += [["feralaliases [$user]"," how to install"],["feraliostat [$user]","how to use"],["help $user","send this help"],["helpus $user","tell them how to get help"]]
 helpCommands += [["payments [$user]","payment status and info"],["quota [$user]","how to check quota"],["reroute [$user]","how to reroute"],["status $host [details]","checks status"]]
-helpCommands += [["urls [$user]","lists client urls"],["vpn [$user]","how to set up OpenVPN"],["volunteers [$user]","talk about volunteers"],["plexupdate [$user]","host to update plex"],["geoip [$user]","describe geoip system"],["invites [$user]", feral_channel + " invite policy"]]
+helpCommands += [["urls [$user]","lists client urls"],["vpn [$user]","how to set up OpenVPN"],["volunteers [$user]","talk about volunteers"],["plexupdate [$user]","host to update plex"]]
+helpCommands += [["geoip [$user]","describe geoip system"],["invites [$user]", feral_channel + " invite policy"]]
 helpCommands += [["t [$user]","displays the topic of " + feral_channel],["staff|notstaff [$user]","how to get staff"],["ipt [$user]","IPT infographic"]]
 helpCommands += [["www [$user]","link to faq on using the www dir"],["nginx","Install nginx"],["upgrade","How to change plans"]]
 helpCommands += [["cache [user]","tell user to clear cache"]]
@@ -268,9 +274,15 @@ class FeralTools(callbacks.Plugin):
     def bitkinex(self, irc, msg, args):
         """
         """
-        reply = "If you are experiencing errors with SFTP on bitkinex after OS updates (see https://tinyurl.com/y7mk4xyy for details), this is due to SFTP no longer supporting the 8 year old secuirty ciphers. Please either use a different client (for SFTP), or use FTP (insecure) -- Debian no longer allows bitkinex to use sftp."
+        reply = "If you are experiencing errors with SFTP on bitkinex after OS updates (see https://tinyurl.com/y7mk4xyy for details), this is due to SFTP no longer supporting the 8 year old security ciphers. Please either use a different client (for SFTP), or use FTP (insecure) -- Debian no longer allows bitkinex to use sftp."
         self.reply(irc, args, reply)
         reply = "You may not need to segment if you use the rerouting tool (say *reroute for details) LFTP is the only free windows client that segments, SmartFTP and CuteFTP also segment, but cost money."
+        self.reply(irc, args, reply)
+
+    def bin(self, irc, msg, args):
+        """
+        """
+        reply = "Please be aware that /bin has a specific meaning. It refers to the directory 'bin' located on the root '/' of the server. Perhaps you meant '~/bin', which is the directory 'bin' located in your home directory. These are very different locations, and the difference is important."
         self.reply(irc, args, reply)
 
     def cache(self, irc, msg, args):
@@ -342,16 +354,16 @@ class FeralTools(callbacks.Plugin):
         Usage: search
         """
         if len(args) ==1:
-            reply = "Feral FAQ search result: " + shortenURL(URL_faq_search + args[0])
+            reply = "Feral FAQ search result (for historical use): " + shortenURL(URL_faq_search + args[0])
             #reply = "Feral FAQ search result: " + URL_faq_search + urllib.quote_plus(args[0])
         elif len(args) >=1:
-            reply = "Feral FAQ search result: " + shortenURL(URL_faq_search + "+".join(args))
+            reply = "Feral FAQ search result (for historical use): " + shortenURL(URL_faq_search + "+".join(args))
             #reply = "Feral FAQ search result: " + URL_faq_search + urllib.quote_plus("+".join(args))
         else:
             reply = "Please provide a term to search for."
         irc.reply(reply, prefixNick=False)
         if extras:
-            reply = "See also: *wikisearch"
+            reply = "See also: *wikisearch and *search"
             irc.reply(reply, prefixNick=False)
 
     def feralaliases (self, irc, msg, args):
@@ -403,7 +415,7 @@ class FeralTools(callbacks.Plugin):
         """
         ipt info
         """
-        reply = "For information about IPT, please check here: http://i.imgur.com/b4cCrsJ.png"
+        reply = "For information about IPT, please check here: https://imgur.com/a/0TsHXj0"
         self.reply(irc, args, reply)
 
     def ncdu (self, irc, msg, args):
@@ -418,6 +430,12 @@ class FeralTools(callbacks.Plugin):
         """
         reply = "To find out how to install nginx: " + URL_faq_nginx
         self.reply(irc, args, reply)
+
+    def next (self, irc, msg, args):
+        """
+        """
+        reply = "Another satisfied customer!"
+        irc.reply(reply, prefixNick=False)
 
     def notstaff (self, irc, msg, args):
         self.staff(irc, msg, args)
@@ -462,8 +480,8 @@ class FeralTools(callbacks.Plugin):
 
     #def status(self, irc, msg, args, host):
     def search(self, irc, msg, args):
-        self.faqsearch(irc, msg, args);
         self.wikisearch(irc, msg, args);
+        self.faqsearch(irc, msg, args);
 
     def searchfaq(self, irc, msg, args):
         self.faqsearch(irc, msg, args);
@@ -493,9 +511,16 @@ class FeralTools(callbacks.Plugin):
             details='false'
         check_thread = threading.Thread(target=self._status, args=(irc,args,host,details))
         check_thread.start()
-        irc.reply("Feral status: https://status.feral.io/ | Overview status: https://tinyurl.com/yc6h5qcp | specific host status to follow shortly...", prefixNick=False)
+        irc.reply("Feral overview: https://tinyurl.com/yc6h5qcp | specific host status to follow shortly...", prefixNick=False)
 #        irc.reply("Please see the topic")
 #/Pair
+
+    def tilde(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "If you are refering to a location that has a tilde (the ~ symbol) in it, please make sure you include it when chatting. ~/bin and /bin are VERY different. (Say *bin for details)"
+        self.reply(irc, args, reply)
 
     def tunnel(self, irc, msg, args):
         """
@@ -522,7 +547,7 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: 
         """
-        reply = "Plex is now available. Please see: " + URL_faq_plex + " for details"
+        reply = "Plex is available. Please see: " + URL_faq_plex + " for details"
         self.reply(irc, args, reply)
 
     def plugins(self, irc, msg, args):
@@ -536,9 +561,7 @@ class FeralTools(callbacks.Plugin):
         """
         Usage: 
         """
-        reply = "To upgrade to the latest *Feral supported version* (currently " + ircutils.mircColor(FeralPlexVersion,"green") + ", not always the latest Plex version) of plex please run this: kill $(ps x | pgrep -fu $(whoami) 'plexmediaserver') &> /dev/null; rm -rf ~/private/plex && mkdir -p ~/private/plex"
-        self.reply(irc, args, reply)
-        reply = "ALTERNATIVELY you can try downloading the .deb file and running: dpkg-deb -x plexmediaserver_*_amd64.deb ~/private/plex ; kill $(ps x | pgrep -fu $(whoami) 'plexmediaserver') -- this allows you to install arbitrary, untested versions of Plex (including Plex Pass)." 
+        reply = "To upgrade to the latest *Feral supported version* (currently " + ircutils.mircColor(FeralPlexVersion,"green") + ", not always the latest Plex version) please see " + URL_faq_plex + " for details."
         self.reply(irc, args, reply)
         reply = "To troubleshoot plex installation, or upgrade issues, please first make sure Plex EAE Service is not running -- see *EAE for details"
         self.reply(irc, args, reply)
@@ -548,6 +571,13 @@ class FeralTools(callbacks.Plugin):
         Usage: 
         """
         reply = "The old pricing page can be found at " + URL_pricing
+        self.reply(irc, args, reply)
+
+    def privacy(self, irc, msg, args):
+        """
+        Usage: 
+        """
+        reply = "Feralhosting's privacy policy can be found at " + URL_privacy
         self.reply(irc, args, reply)
 
     def quota(self, irc, msg, args):
@@ -631,6 +661,10 @@ class FeralTools(callbacks.Plugin):
     def reclaim(self, irc, msg, args):
         self.unclaimed(irc, msg, args);
 
+    def redact(self, irc, msg, args):
+        reply = "When redacting data, please replace the values you change with the letters REDACT -- for instance \"password:b@dp@$$\" would become:\"password:REDACTED\""
+        self.reply(irc, args, reply)
+
     def recompile(self, irc, msg, args):
         """
         Usage:
@@ -659,6 +693,17 @@ class FeralTools(callbacks.Plugin):
         reply = "You might find this link helpful in avoiding feeding (or being) a help vampire: " + URL_vampire
         self.reply(irc, args, reply)
 
+    def voicethem(self, irc, msg, args):
+        """
+        Usage:
+        """
+        reply = "trying this";
+#        self.reply(irc, args, reply)
+        irc.sendMsg(ircmsgs.voice("##feral-chat","liriel", msg=None));
+        irc.sendMsg(ircmsgs.devoice("##feral-chat","liriel", msg=None));
+#        time.sleep(5);
+#        irc.sendMsg(ircmsgs.voice("##feral-chat","liriel", msg=None));
+
     def volunteers(self, irc, msg, args):
         """
         Usage:
@@ -671,16 +716,16 @@ class FeralTools(callbacks.Plugin):
         Usage: search
         """
         if len(args) ==1:
-            reply = "Feral Wiki search result: " + shortenURL(URL_wiki_search + args[0])
+            reply = "Feral Wiki search result (most current): " + shortenURL(URL_wiki_search + args[0])
             #reply = "Feral FAQ search result: " + URL_faq_search + urllib.quote_plus(args[0])
         elif len(args) >=1:
-            reply = "Feral Wiki search result: " + shortenURL(URL_wiki_search + "+".join(args))
+            reply = "Feral Wiki search result (most current): " + shortenURL(URL_wiki_search + "+".join(args))
             #reply = "Feral FAQ search result: " + URL_faq_search + urllib.quote_plus("+".join(args))
         else:
             reply = "Please provide a term to search for."
         irc.reply(reply, prefixNick=False)
         if extras:
-            reply = "See also: *faqsearch"
+            reply = "See also: *faqsearch and *search"
             irc.reply(reply, prefixNick=False)
 
     def www(self, irc, msg, args):
@@ -688,6 +733,13 @@ class FeralTools(callbacks.Plugin):
         Usage:
         """
         reply = "Putting your WWW folder to use: " + URL_faq_www
+        self.reply(irc, args, reply)
+
+    def xy(self, irc, msg, args):
+        """
+        Usage:
+        """
+        reply = "this seems like you are potentially asking about an 'XY' problem (http://xyproblem.info/)  -- could you please describe more about the core problem you are trying to resolve, so we can give the best possible answers?"
         self.reply(irc, args, reply)
 
 # jokes
@@ -756,12 +808,17 @@ class FeralTools(callbacks.Plugin):
         irc.reply(reply + msg.nick,prefixNick=False)
 
 
-    def test(self, irc, msg, args):
+#    def test(self, irc, msg, args):
         """
         Usage: 
         """
-
-        irc.reply(irc.state.channels[feral_channel].topic)        
+#        command = 'curl -sL https://plex.tv/api/downloads/1.json | grep -woP \'"ubuntu","url":"(.*)_amd64.deb"\' | cut -d\\" -f6'
+#        output = subprocess.check_output(['bash','-c', command])
+#
+#        reply = output
+#        self.reply(irc, args, reply)
+#
+        #irc.reply(reply + msg.nick,prefixNick=False)
         
 
 Class = FeralTools
